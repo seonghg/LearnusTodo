@@ -2,28 +2,6 @@ package RunA2Do.todo.controller;
 
 import org.springframework.web.bind.annotation.*;
 
-/*
-Request Sample
-{
-       "midtermWeight": 30,
-       "finalWeight": 35,
-       "homeworkWeight": 15,
-       "presentationWeight": 10,
-       "attendanceWeight": 10,
-
-       "midtermScore": 82,
-       "finalScore": 90,
-       "homeworkScore": 95,
-       "presentationScore": 88,
-       "attendanceScore": 100
-}
-
-Response Sample
-        {
-         80.34
-         }
-*/
-
 @RestController
 @RequestMapping("/api/grade")
 public class GradePredictController {

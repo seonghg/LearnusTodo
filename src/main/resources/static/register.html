@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnToDo | 회원가입</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+    <main class="auth-shell register-shell">
+        <section class="auth-intro">
+            <p class="eyebrow">Create Account</p>
+            <h1>LearnToDo 계정을 만들고 학습 정보를 관리하세요.</h1>
+            <p>가입 후 로그인하면 대시보드에서 LearnUs 강의와 일정을 동기화할 수 있습니다.</p>
+        </section>
+
+        <section class="auth-card">
+            <h2>회원가입</h2>
+            <p class="muted">서비스 로그인에 사용할 계정 정보를 입력합니다.</p>
+
+            <form data-register-form>
+                <div class="form-row">
+                    <label>
+                        이름
+                        <input name="userName" type="text" placeholder="홍길동" required>
+                    </label>
+
+                    <label>
+                        학년
+                        <input name="grade" type="number" min="1" max="6" placeholder="3" required>
+                    </label>
+                </div>
+
+                <label>
+                    학부/학과
+                    <input name="department" type="text" placeholder="컴퓨터정보통신공학부" required>
+                </label>
+
+                <label>
+                    학번
+                    <input name="idNumber" type="text" placeholder="2020123456" required>
+                </label>
+
+                <label>
+                    이메일
+                    <input name="emailAddress" type="email" placeholder="hong@example.com">
+                </label>
+
+                <label>
+                    아이디
+                    <input name="userId" type="text" autocomplete="username" placeholder="testuser" required>
+                </label>
+
+                <label>
+                    비밀번호
+                    <input name="password" type="password" autocomplete="new-password" required>
+                </label>
+
+                <label>
+                    비밀번호 확인
+                    <input name="passwordConfirm" type="password" autocomplete="new-password" required>
+                </label>
+
+                <button class="btn btn-primary full-width" type="submit">회원가입</button>
+            </form>
+
+            <p class="status-message" data-register-status></p>
+            <p class="auth-link">이미 계정이 있나요? <a href="login.html">로그인</a></p>
+        </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/register.js"></script>
+</body>
+</html>

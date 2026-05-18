@@ -17,12 +17,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/todo/api/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/login", "/logout", "/api/**", "/todo/api/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/api/learnus_con",
-                                "/todo/api/learnus_con",
+                                "/login.html",
+                                "/register.html",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
                                 "/hello",
                                 "/db-test",
                                 "/api/auth/register",
@@ -30,7 +33,13 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.permitAll())
+                .formLogin(form -> form
+                        .loginPage("/login.html")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/dashboard.html", true)
+                        .failureUrl("/login.html?error")
+                        .permitAll()
+                )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/")
                         .permitAll()

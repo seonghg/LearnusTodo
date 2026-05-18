@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,9 +46,11 @@ public class LearnUsController {
     @GetMapping("/todo/api/learnus_con")
     public String learnusConnect(
             @RequestParam("id") String id,
-            @RequestParam("password") String password
+            @RequestParam("password") String password,
+            Authentication authentication
     ) {
         WebDriver driver = null;
+        String userId = authentication != null ? authentication.getName() : id;
 
         try {
             ChromeOptions options = new ChromeOptions();
@@ -208,8 +211,8 @@ public class LearnUsController {
             SyncResult syncResult = new SyncResult();
 
             if (success) {
-                syncResult.courseCount = saveCourses(id, courseBox);
-                syncResult.eventCount = saveCalendarEvents(id, calendarBox);
+                syncResult.courseCount = saveCourses(userId, courseBox);
+                syncResult.eventCount = saveCalendarEvents(userId, calendarBox);
             }
 
             return html(
@@ -661,7 +664,6 @@ public class LearnUsController {
 
         text = text.replaceAll("\\s+", " ").trim();
 
-        // 혹시 img alt/title 등이 섞일 경우를 대비한 최소 정리
         text = text.replace("Loading", "").trim();
 
         return normalizeBlank(text);
