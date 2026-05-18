@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnToDo | 마이페이지</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <a class="logo" href="dashboard.html">LearnToDo</a>
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">대시보드</a>
+                <a href="grades.html" class="nav-item">성적 예측</a>
+                <a href="mypage.html" class="nav-item active">마이페이지</a>
+                <form action="/logout" method="post">
+                    <button class="nav-item nav-button" type="submit">로그아웃</button>
+                </form>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div>
+                    <h1>마이페이지</h1>
+                    <p class="muted">내 정보 확인, 사용자 정보 수정, 일정 요약을 관리합니다.</p>
+                </div>
+            </header>
+
+            <section class="profile-grid">
+                <article class="card">
+                    <div class="section-header">
+                        <h2>내 정보</h2>
+                    </div>
+                    <dl class="profile-details">
+                        <div>
+                            <dt>아이디</dt>
+                            <dd data-profile-user-id>-</dd>
+                        </div>
+                        <div>
+                            <dt>이름</dt>
+                            <dd data-profile-user-name>-</dd>
+                        </div>
+                        <div>
+                            <dt>학부/학과</dt>
+                            <dd data-profile-department>-</dd>
+                        </div>
+                        <div>
+                            <dt>학번</dt>
+                            <dd data-profile-id-number>-</dd>
+                        </div>
+                        <div>
+                            <dt>학년</dt>
+                            <dd data-profile-grade>-</dd>
+                        </div>
+                        <div>
+                            <dt>이메일</dt>
+                            <dd data-profile-email>-</dd>
+                        </div>
+                        <div>
+                            <dt>가입일</dt>
+                            <dd data-profile-created-at>-</dd>
+                        </div>
+                    </dl>
+                </article>
+
+                <article class="card">
+                    <div class="section-header">
+                        <h2>사용자 정보 수정</h2>
+                    </div>
+                    <form class="profile-form" data-profile-form>
+                        <label>
+                            이름
+                            <input name="userName" type="text" required>
+                        </label>
+                        <label>
+                            학부/학과
+                            <input name="department" type="text" required>
+                        </label>
+                        <div class="form-row">
+                            <label>
+                                학번
+                                <input name="idNumber" type="text" required>
+                            </label>
+                            <label>
+                                학년
+                                <input name="grade" type="number" min="1" max="6" required>
+                            </label>
+                        </div>
+                        <label>
+                            이메일
+                            <input name="emailAddress" type="email">
+                        </label>
+                        <label>
+                            새 비밀번호
+                            <input name="newPassword" type="password" autocomplete="new-password" placeholder="변경할 때만 입력">
+                        </label>
+                        <button class="btn btn-primary" type="submit">정보 수정</button>
+                    </form>
+                    <p class="status-message" data-profile-status></p>
+                </article>
+            </section>
+
+            <section class="profile-grid">
+                <article class="card">
+                    <div class="section-header">
+                        <h2>내 일정 요약</h2>
+                    </div>
+                    <div class="status-cards compact-status-cards">
+                        <article class="status-card">
+                            <span class="label">전체 일정</span>
+                            <strong data-summary-total>0</strong>
+                        </article>
+                        <article class="status-card">
+                            <span class="label">오늘 일정</span>
+                            <strong data-summary-today>0</strong>
+                        </article>
+                        <article class="status-card">
+                            <span class="label">다가오는 일정</span>
+                            <strong data-summary-upcoming>0</strong>
+                        </article>
+                    </div>
+                    <ul class="data-list" data-summary-events>
+                        <li class="empty-state">일정 요약을 불러오는 중입니다.</li>
+                    </ul>
+                </article>
+
+                <article class="card danger-card">
+                    <div class="section-header">
+                        <h2>계정 관리</h2>
+                    </div>
+                    <p class="muted">계정을 삭제하면 사용자 정보, 개인 일정, 수강 연결 정보가 삭제됩니다.</p>
+                    <button class="btn btn-danger" type="button" data-delete-account>계정 삭제</button>
+                    <p class="status-message danger-text" data-delete-status></p>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/mypage.js"></script>
+</body>
+</html>
