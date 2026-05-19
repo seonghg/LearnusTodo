@@ -5,7 +5,7 @@ Spring Boot service for Yonsei LearnUs Calendar
 
 ## 1. Quick Start
 ```text
-[1] #application.properties Setting
+[1] # You must configure application.properties !
 [2] .\gradlew.bat clean bootRun
 ```
 
