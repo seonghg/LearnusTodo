@@ -71,6 +71,7 @@ public class DashboardApiController {
                     cal.end_time,
                     cal.is_all_day,
                     cal.location,
+                    cal.source_type,
                     cal.external_event_id,
                     c.course_name,
                     c.course_code

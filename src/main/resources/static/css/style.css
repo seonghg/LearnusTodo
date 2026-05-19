@@ -25,12 +25,14 @@ a {
     text-decoration: none;
 }
 
-input {
+input,
+select {
     width: 100%;
     padding: 11px 12px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font: inherit;
+    background: white;
 }
 
 input:disabled {
@@ -241,6 +243,17 @@ label {
     gap: 20px;
 }
 
+.todo-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+    gap: 20px;
+}
+
+.todo-form {
+    display: grid;
+    gap: 14px;
+}
+
 .side-stack {
     display: grid;
     gap: 20px;
@@ -257,6 +270,26 @@ label {
 .section-header h2 {
     margin: 0;
     font-size: 18px;
+}
+
+.calendar-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-month-label {
+    min-width: 72px;
+    text-align: center;
+    color: var(--muted-color);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.btn-compact {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 13px;
 }
 
 .calendar-table {
@@ -281,6 +314,7 @@ label {
     height: 104px;
     padding: 8px;
     background: white;
+    position: relative;
 }
 
 .calendar-table td.muted {
@@ -296,6 +330,7 @@ label {
 }
 
 .event {
+    position: relative;
     padding: 4px 6px;
     border-radius: 6px;
     background: var(--primary-soft);
@@ -305,6 +340,30 @@ label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.event:hover {
+    overflow: visible;
+    white-space: normal;
+    z-index: 20;
+}
+
+.event:hover::after {
+    content: attr(data-full-title);
+    position: absolute;
+    left: 0;
+    top: calc(100% + 6px);
+    width: min(320px, 70vw);
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    color: var(--text-color);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+    font-size: 12px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    pointer-events: none;
 }
 
 .data-list {
@@ -475,6 +534,7 @@ label {
     .auth-shell,
     .app-container,
     .dashboard-grid,
+    .todo-layout,
     .status-cards,
     .profile-grid {
         grid-template-columns: 1fr;
