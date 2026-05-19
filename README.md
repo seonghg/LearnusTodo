@@ -1,5 +1,7 @@
+<img width="557" height="228" alt="LearnToDo" src="https://github.com/user-attachments/assets/5499da11-d1e3-47b2-8235-1ff3a7534abd" />
+
 # LearnusTodo
-Spring Boot service for crawling Yonsei LearnUs calendar data
+Spring Boot service for Yonsei LearnUs Calendar
 
 ## 1. Quick Start
 ```text
