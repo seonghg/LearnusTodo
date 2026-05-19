@@ -481,6 +481,14 @@ label {
     padding-bottom: 0;
 }
 
+.todo-event-item {
+    align-items: center;
+}
+
+.todo-event-item > div {
+    min-width: 0;
+}
+
 .data-item strong,
 .data-item span {
     display: block;

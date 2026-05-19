@@ -1,5 +1,6 @@
 package RunA2Do.todo.controller;
 
+import RunA2Do.todo.repository.LearnUsRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -8,7 +9,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,10 +37,10 @@ public class LearnUsController {
     private static final Pattern RATE_PATTERN =
             Pattern.compile("(\\d+(?:\\.\\d+)?)\\s*%");
 
-    private final JdbcTemplate jdbcTemplate;
+    private final LearnUsRepository learnUsRepository;
 
-    public LearnUsController(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public LearnUsController(LearnUsRepository learnUsRepository) {
+        this.learnUsRepository = learnUsRepository;
     }
 
     @GetMapping("/todo/api/learnus_con")
@@ -351,34 +351,8 @@ public class LearnUsController {
             String courseLevel,
             String courseUrl
     ) {
-        return jdbcTemplate.queryForObject(
-                """
-                INSERT INTO courses (
-                    external_course_id,
-                    course_code,
-                    course_name,
-                    professor_name,
-                    semester_name,
-                    course_type,
-                    course_level,
-                    course_url,
-                    source_type,
-                    updated_at
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, now())
-                ON CONFLICT (source_type, external_course_id)
-                DO UPDATE SET
-                    course_code = EXCLUDED.course_code,
-                    course_name = EXCLUDED.course_name,
-                    professor_name = EXCLUDED.professor_name,
-                    semester_name = EXCLUDED.semester_name,
-                    course_type = EXCLUDED.course_type,
-                    course_level = EXCLUDED.course_level,
-                    course_url = EXCLUDED.course_url,
-                    updated_at = now()
-                RETURNING course_id
-                """,
-                Long.class,
+        return learnUsRepository.upsertCourse(
+                SOURCE_TYPE,
                 externalCourseId,
                 courseCode,
                 courseName,
@@ -386,48 +360,20 @@ public class LearnUsController {
                 semesterName,
                 courseType,
                 courseLevel,
-                courseUrl,
-                SOURCE_TYPE
+                courseUrl
         );
     }
 
     private void upsertUserCourse(String userId, Long courseId, WebElement item, String itemText) {
-        jdbcTemplate.update(
-                """
-                INSERT INTO user_courses (
-                    user_id,
-                    course_id,
-                    learning_rate,
-                    completed_count,
-                    total_count,
-                    attendance_url,
-                    is_new,
-                    is_active,
-                    source_type,
-                    synced_at,
-                    updated_at
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, TRUE, ?, now(), now())
-                ON CONFLICT (user_id, course_id)
-                DO UPDATE SET
-                    learning_rate = EXCLUDED.learning_rate,
-                    completed_count = EXCLUDED.completed_count,
-                    total_count = EXCLUDED.total_count,
-                    attendance_url = EXCLUDED.attendance_url,
-                    is_new = EXCLUDED.is_new,
-                    is_active = TRUE,
-                    source_type = EXCLUDED.source_type,
-                    synced_at = now(),
-                    updated_at = now()
-                """,
+        learnUsRepository.upsertUserCourse(
+                SOURCE_TYPE,
                 userId,
                 courseId,
                 extractLearningRate(itemText),
                 extractCompletedCount(itemText),
                 extractTotalCount(itemText),
                 findAttendanceUrl(item),
-                itemText.toLowerCase().contains("new"),
-                SOURCE_TYPE
+                itemText.toLowerCase().contains("new")
         );
     }
 
@@ -581,23 +527,7 @@ public class LearnUsController {
         }
 
         try {
-            List<Long> result = jdbcTemplate.queryForList(
-                    """
-                    SELECT c.course_id
-                    FROM courses c
-                    JOIN user_courses uc ON uc.course_id = c.course_id
-                    WHERE uc.user_id = ?
-                      AND c.source_type = ?
-                      AND c.course_code = ?
-                    LIMIT 1
-                    """,
-                    Long.class,
-                    userId,
-                    SOURCE_TYPE,
-                    courseCode
-            );
-
-            return result.isEmpty() ? null : result.get(0);
+            return learnUsRepository.findCourseIdByCode(SOURCE_TYPE, userId, courseCode);
 
         } catch (Exception e) {
             return null;
@@ -615,33 +545,8 @@ public class LearnUsController {
             Long courseId,
             String externalEventId
     ) {
-        jdbcTemplate.update(
-                """
-                INSERT INTO calendar (
-                    user_id,
-                    title,
-                    description,
-                    start_time,
-                    end_time,
-                    is_all_day,
-                    location,
-                    course_id,
-                    source_type,
-                    external_event_id,
-                    updated_at
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())
-                ON CONFLICT (user_id, source_type, external_event_id)
-                DO UPDATE SET
-                    title = EXCLUDED.title,
-                    description = EXCLUDED.description,
-                    start_time = EXCLUDED.start_time,
-                    end_time = EXCLUDED.end_time,
-                    is_all_day = EXCLUDED.is_all_day,
-                    location = EXCLUDED.location,
-                    course_id = EXCLUDED.course_id,
-                    updated_at = now()
-                """,
+        learnUsRepository.upsertCalendarEvent(
+                SOURCE_TYPE,
                 userId,
                 normalizeText(title),
                 normalizeText(description),
@@ -650,7 +555,6 @@ public class LearnUsController {
                 isAllDay,
                 location,
                 courseId,
-                SOURCE_TYPE,
                 externalEventId
         );
     }

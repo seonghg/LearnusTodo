@@ -6,6 +6,35 @@ const todoEventList = document.querySelector("[data-todo-event-list]");
 loadCourses();
 loadEvents();
 
+todoEventList?.addEventListener("click", async (event) => {
+    const deleteButton = event.target.closest("[data-delete-todo-id]");
+    if (!deleteButton) return;
+
+    const eventId = deleteButton.dataset.deleteTodoId;
+    if (!eventId) return;
+
+    deleteButton.disabled = true;
+    todoStatus.textContent = "일정을 삭제하는 중입니다.";
+
+    try {
+        const response = await fetch(`/api/todos/${encodeURIComponent(eventId)}`, {
+            method: "DELETE"
+        });
+        const result = await response.json();
+
+        todoStatus.textContent = result.message || "처리가 완료되었습니다.";
+
+        if (response.ok && result.success) {
+            await loadEvents();
+        } else {
+            deleteButton.disabled = false;
+        }
+    } catch (error) {
+        deleteButton.disabled = false;
+        todoStatus.textContent = `일정 삭제 중 오류가 발생했습니다: ${error.message}`;
+    }
+});
+
 todoForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -74,11 +103,16 @@ async function loadEvents() {
         }
 
         todoEventList.innerHTML = upcoming.map((event) => `
-            <li class="data-item">
+            <li class="data-item todo-event-item">
                 <div>
                     <strong>${escapeHtml(event.title)}</strong>
                     <span>${formatDateTime(event.start_time)} · ${escapeHtml(event.course_name || "개인 일정")}</span>
                 </div>
+                ${event.source_type === "USER_TODO" ? `
+                    <button class="btn btn-danger btn-compact" type="button" data-delete-todo-id="${escapeHtml(event.event_id)}">
+                        삭제
+                    </button>
+                ` : ""}
             </li>
         `).join("");
     } catch (error) {

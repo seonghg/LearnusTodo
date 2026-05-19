@@ -1,11 +1,9 @@
 package RunA2Do.todo.controller;
 
+import RunA2Do.todo.service.AuthService;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,15 +15,12 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
-    public AuthController(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
-    @Transactional
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(
             @RequestParam String userName,
@@ -36,44 +31,13 @@ public class AuthController {
             @RequestParam String userId,
             @RequestParam String password
     ) {
-        String encodedPassword = passwordEncoder.encode(password);
-
         try {
-            jdbcTemplate.update(
-                    """
-                    INSERT INTO users (
-                        user_name,
-                        department,
-                        id_number,
-                        grade,
-                        email_address,
-                        user_id,
-                        user_password,
-                        enabled
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, TRUE)
-                    """,
-                    userName,
-                    department,
-                    idNumber,
-                    grade,
-                    emailAddress,
-                    userId,
-                    encodedPassword
-            );
-
-            jdbcTemplate.update(
-                    "INSERT INTO user_authorities (user_id, authority) VALUES (?, ?)",
-                    userId,
-                    "ROLE_USER"
-            );
-
+            authService.register(userName, department, idNumber, grade, emailAddress, userId, password);
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "message", "회원가입이 완료되었습니다.",
                     "userId", userId
             ));
-
         } catch (DuplicateKeyException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
                     "success", false,

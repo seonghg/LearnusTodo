@@ -1,29 +1,26 @@
 package RunA2Do.todo.controller;
 
+import RunA2Do.todo.security.AuthenticatedUsers;
+import RunA2Do.todo.service.TodoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 public class TodoController {
 
-    private static final String SOURCE_TYPE = "USER_TODO";
-    private static final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul");
+    private final TodoService todoService;
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public TodoController(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public TodoController(TodoService todoService) {
+        this.todoService = todoService;
     }
 
     @PostMapping("/api/todos")
@@ -34,96 +31,47 @@ public class TodoController {
             @RequestParam String priority,
             Authentication authentication
     ) {
-        String userId = requireUserId(authentication);
+        String userId = AuthenticatedUsers.requireUserId(authentication);
 
-        if (!isValidPriority(priority)) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "우선순위 값이 올바르지 않습니다."
+        try {
+            Long eventId = todoService.createTodo(userId, title, courseId, dueDate, priority);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "ToDo 일정이 추가되었습니다.",
+                    "eventId", eventId
             ));
-        }
-
-        Long resolvedCourseId = resolveCourseId(courseId);
-
-        if (resolvedCourseId != null) {
-            Integer courseCount = jdbcTemplate.queryForObject(
-                    """
-                    SELECT COUNT(*)
-                    FROM user_courses
-                    WHERE user_id = ?
-                      AND course_id = ?
-                      AND is_active = TRUE
-                    """,
-                    Integer.class,
-                    userId,
-                    resolvedCourseId
-            );
-
-            if (courseCount == null || courseCount == 0) {
+        } catch (ResponseStatusException e) {
+            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                         "success", false,
                         "message", "선택한 과목에 접근할 수 없습니다."
                 ));
             }
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "우선순위 값이 올바르지 않습니다."
+            ));
         }
+    }
 
-        OffsetDateTime startTime = LocalDateTime.parse(dueDate).atZone(KOREA_ZONE).toOffsetDateTime();
-        String externalEventId = "todo-" + UUID.randomUUID();
-        String description = "priority=" + priority
-                + (resolvedCourseId == null ? ";category=개인 일정" : "");
+    @DeleteMapping("/api/todos/{eventId}")
+    public ResponseEntity<Map<String, Object>> deleteTodo(
+            @PathVariable Long eventId,
+            Authentication authentication
+    ) {
+        String userId = AuthenticatedUsers.requireUserId(authentication);
+        boolean deleted = todoService.deleteTodo(userId, eventId);
 
-        Long eventId = jdbcTemplate.queryForObject(
-                """
-                INSERT INTO calendar (
-                    user_id,
-                    title,
-                    description,
-                    start_time,
-                    end_time,
-                    is_all_day,
-                    location,
-                    course_id,
-                    source_type,
-                    external_event_id,
-                    updated_at
-                )
-                VALUES (?, ?, ?, ?, NULL, FALSE, NULL, ?, ?, ?, now())
-                RETURNING event_id
-                """,
-                Long.class,
-                userId,
-                title,
-                description,
-                startTime,
-                resolvedCourseId,
-                SOURCE_TYPE,
-                externalEventId
-        );
+        if (!deleted) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "success", false,
+                    "message", "삭제할 ToDo 일정을 찾을 수 없습니다."
+            ));
+        }
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "ToDo 일정이 추가되었습니다.",
-                "eventId", eventId
+                "message", "ToDo 일정이 삭제되었습니다."
         ));
-    }
-
-    private String requireUserId(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("Authentication is required.");
-        }
-        return authentication.getName();
-    }
-
-    private boolean isValidPriority(String priority) {
-        return "빠름".equals(priority)
-                || "보통".equals(priority)
-                || "느림".equals(priority);
-    }
-
-    private Long resolveCourseId(String courseId) {
-        if (courseId == null || courseId.isBlank() || "PERSONAL".equals(courseId)) {
-            return null;
-        }
-        return Long.valueOf(courseId);
     }
 }
