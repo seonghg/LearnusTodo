@@ -29,70 +29,72 @@
                 </div>
             </header>
 
-            <section class="grade-layout">
-                <div class="card grade-input-card">
-                    <div class="section-header">
-                        <h2>평가 항목 입력</h2>
-                    </div>
-                    <form class="grade-form" data-grade-form>
-                        <div class="grade-grid grade-grid-header">
-                            <span>항목</span>
-                            <span>비율</span>
-                            <span>점수</span>
-                        </div>
-
-                        <label class="grade-grid">
-                            <span>중간고사</span>
-                            <input name="midtermWeight" type="number" value="30" min="0" max="100" required>
-                            <input name="midtermScore" type="number" value="82" min="0" max="100">
-                        </label>
-
-                        <label class="grade-grid">
-                            <span>기말고사</span>
-                            <input name="finalWeight" type="number" value="35" min="0" max="100" required>
-                            <input name="finalScore" type="number" value="90" min="0" max="100">
-                        </label>
-
-                        <label class="grade-grid">
-                            <span>과제</span>
-                            <input name="homeworkWeight" type="number" value="15" min="0" max="100" required>
-                            <input name="homeworkScore" type="number" value="95" min="0" max="100">
-                        </label>
-
-                        <label class="grade-grid">
-                            <span>발표</span>
-                            <input name="presentationWeight" type="number" value="10" min="0" max="100" required>
-                            <input name="presentationScore" type="number" value="88" min="0" max="100">
-                        </label>
-
-                        <label class="grade-grid">
-                            <span>출석</span>
-                            <input name="attendanceWeight" type="number" value="10" min="0" max="100" required>
-                            <input name="attendanceScore" type="number" value="100" min="0" max="100">
-                        </label>
-
-                        <div class="action-row">
-                            <button class="btn btn-primary" type="submit">예상 점수 계산</button>
-                        </div>
-                    </form>
-                </div>
-
-                <aside class="grade-result-panel" aria-live="polite">
-                    <section class="grade-score-card is-empty" data-grade-card>
-                        <span class="grade-label">예상 성적</span>
-                        <strong data-grade-letter>-</strong>
-                        <span data-grade-score>계산 결과가 여기에 표시됩니다.</span>
-                    </section>
-
-                    <section class="card">
+            <section class="card grade-workspace">
+                <div class="grade-layout">
+                    <section class="grade-panel grade-input-card">
                         <div class="section-header">
-                            <h2>항목별 점수 추이</h2>
+                            <h2>평가 항목 입력</h2>
                         </div>
-                        <div class="grade-chart" data-grade-chart>
-                            <p class="empty-state">예상 점수를 계산하면 선 그래프와 기여도가 표시됩니다.</p>
-                        </div>
+                        <form class="grade-form" data-grade-form>
+                            <div class="grade-grid grade-grid-header">
+                                <span>항목</span>
+                                <span>비율</span>
+                                <span>점수</span>
+                            </div>
+
+                            <label class="grade-grid">
+                                <span>중간고사</span>
+                                <input name="midtermWeight" type="number" value="30" min="0" max="100" required>
+                                <input name="midtermScore" type="number" value="82" min="0" max="100">
+                            </label>
+
+                            <label class="grade-grid">
+                                <span>기말고사</span>
+                                <input name="finalWeight" type="number" value="35" min="0" max="100" required>
+                                <input name="finalScore" type="number" value="90" min="0" max="100">
+                            </label>
+
+                            <label class="grade-grid">
+                                <span>과제</span>
+                                <input name="homeworkWeight" type="number" value="15" min="0" max="100" required>
+                                <input name="homeworkScore" type="number" value="95" min="0" max="100">
+                            </label>
+
+                            <label class="grade-grid">
+                                <span>발표</span>
+                                <input name="presentationWeight" type="number" value="10" min="0" max="100" required>
+                                <input name="presentationScore" type="number" value="88" min="0" max="100">
+                            </label>
+
+                            <label class="grade-grid">
+                                <span>출석</span>
+                                <input name="attendanceWeight" type="number" value="10" min="0" max="100" required>
+                                <input name="attendanceScore" type="number" value="100" min="0" max="100">
+                            </label>
+
+                            <div class="action-row">
+                                <button class="btn btn-primary" type="submit">예상 점수 계산</button>
+                            </div>
+                        </form>
                     </section>
-                </aside>
+
+                    <div class="grade-insight-panel">
+                        <section class="grade-score-card is-empty" data-grade-card aria-live="polite">
+                            <span class="grade-label">예상 성적</span>
+                            <strong data-grade-letter>-</strong>
+                            <span data-grade-score>계산 결과가 여기에 표시됩니다.</span>
+                        </section>
+
+                        <section class="grade-panel grade-chart-card" aria-live="polite">
+                            <div class="section-header">
+                                <h2>항목별 점수 추이</h2>
+                            </div>
+                            <div class="grade-chart" data-grade-chart>
+                                <p class="empty-state">예상 점수를 계산하면 선 그래프와 기여도가 표시됩니다.</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
             </section>
         </main>
     </div>

@@ -155,7 +155,7 @@ function renderContributionRows(rows) {
         <div class="grade-chart-row">
             <div class="grade-chart-meta">
                 <strong>${row.label}</strong>
-                <span>${formatScore(row.score)}점 · ${formatScore(row.weight)}% 반영 · ${formatScore(row.contribution)}점 기여</span>
+                <span>${formatScore(row.score)}점 · ${formatScore(row.weight)}% · +${formatScore(row.contribution)}</span>
             </div>
             <div class="grade-bar-track" aria-label="${row.label} ${formatScore(row.score)}점">
                 <span class="grade-bar" style="width: ${clamp(row.score, 0, 100)}%"></span>

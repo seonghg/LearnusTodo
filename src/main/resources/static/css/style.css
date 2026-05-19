@@ -177,14 +177,14 @@ label {
 }
 
 .main-content {
-    padding: 32px;
+    padding: 28px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .header h1 {
@@ -550,28 +550,39 @@ label {
 
 .grade-layout {
     display: grid;
-    grid-template-columns: minmax(360px, 460px) minmax(360px, 1fr);
-    gap: 20px;
-    align-items: start;
+    grid-template-columns: minmax(360px, 0.9fr) minmax(520px, 1.4fr);
+    gap: 18px;
+    align-items: stretch;
+}
+
+.grade-workspace {
+    padding: 18px;
+}
+
+.grade-panel {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fafbff;
+    padding: 18px;
 }
 
 .grade-input-card {
-    padding: 16px;
+    min-height: 100%;
 }
 
 .grade-input-card .section-header {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .grade-form {
     display: grid;
-    gap: 8px;
+    gap: 10px;
 }
 
 .grade-grid {
     display: grid;
-    grid-template-columns: minmax(86px, 1fr) 88px 88px;
-    gap: 8px;
+    grid-template-columns: minmax(92px, 1fr) 96px 96px;
+    gap: 10px;
     align-items: center;
 }
 
@@ -582,14 +593,19 @@ label {
 }
 
 .grade-grid input {
-    min-height: 36px;
-    padding: 8px 10px;
+    min-height: 38px;
+    padding: 9px 10px;
 }
 
 .action-row {
     display: flex;
     gap: 10px;
     margin-top: 8px;
+}
+
+.grade-form .btn {
+    width: 100%;
+    min-height: 42px;
 }
 
 .result-box {
@@ -601,13 +617,16 @@ label {
     font-weight: 700;
 }
 
-.grade-result-panel {
+.grade-result-panel,
+.grade-insight-panel {
     display: grid;
-    gap: 20px;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 18px;
+    align-items: stretch;
 }
 
 .grade-score-card {
-    min-height: 190px;
+    min-height: 100%;
     display: grid;
     align-content: center;
     justify-items: center;
@@ -616,7 +635,7 @@ label {
     border-radius: 8px;
     background: white;
     color: var(--text-color);
-    padding: 24px;
+    padding: 22px 16px;
     text-align: center;
 }
 
@@ -633,8 +652,9 @@ label {
 }
 
 .grade-score-card span:last-child {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 800;
+    line-height: 1.35;
 }
 
 .grade-score-card.is-empty strong {
@@ -674,6 +694,14 @@ label {
 .grade-chart {
     display: grid;
     gap: 14px;
+}
+
+.grade-chart-card {
+    min-height: 100%;
+}
+
+.grade-chart-card .section-header {
+    margin-bottom: 12px;
 }
 
 .grade-trend {
@@ -743,23 +771,24 @@ label {
 
 .grade-contribution-list {
     display: grid;
-    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
 }
 
 .grade-chart-row {
     display: grid;
-    gap: 8px;
+    gap: 7px;
 }
 
 .grade-chart-meta {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
     align-items: baseline;
 }
 
 .grade-chart-meta strong {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .grade-chart-meta span {
@@ -769,7 +798,7 @@ label {
 }
 
 .grade-bar-track {
-    height: 14px;
+    height: 10px;
     overflow: hidden;
     border-radius: 999px;
     background: #eef2f7;
@@ -857,6 +886,18 @@ label {
     }
 
     .grade-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .grade-insight-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .grade-score-card {
+        min-height: 180px;
+    }
+
+    .grade-contribution-list {
         grid-template-columns: 1fr;
     }
 
