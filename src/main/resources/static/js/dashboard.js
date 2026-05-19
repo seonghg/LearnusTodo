@@ -13,8 +13,37 @@ const syncForm = document.querySelector("[data-learnus-sync-form]");
 const syncStatus = document.querySelector("[data-sync-status]");
 let dashboardEvents = [];
 let visibleCalendarDate = new Date();
+let calendarEventsByDate = new Map();
+let activeCalendarPopover = null;
 
 loadDashboard();
+
+document.addEventListener("click", (event) => {
+    if (!activeCalendarPopover) return;
+    if (
+        activeCalendarPopover.contains(event.target)
+        || event.target.closest("[data-calendar-more]")
+    ) {
+        return;
+    }
+    closeCalendarPopover();
+});
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closeCalendarPopover();
+    }
+});
+
+calendarBodyEl?.addEventListener("click", (event) => {
+    const moreButton = event.target.closest("[data-calendar-more]");
+    if (!moreButton) return;
+
+    event.stopPropagation();
+    const dateKey = moreButton.dataset.calendarMore;
+    const dayEvents = calendarEventsByDate.get(dateKey) || [];
+    showCalendarPopover(moreButton, dateKey, dayEvents);
+});
 
 calendarPrevButton?.addEventListener("click", () => {
     visibleCalendarDate = new Date(
@@ -145,6 +174,7 @@ function renderEvents(events) {
 }
 
 function renderCalendar(events) {
+    closeCalendarPopover();
     const year = visibleCalendarDate.getFullYear();
     const month = visibleCalendarDate.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -154,14 +184,14 @@ function renderCalendar(events) {
         calendarMonthLabelEl.textContent = `${year}. ${String(month + 1).padStart(2, "0")}`;
     }
 
-    const eventsByDate = new Map();
+    calendarEventsByDate = new Map();
     for (const event of events) {
         const date = new Date(event.start_time);
         if (Number.isNaN(date.getTime())) continue;
         const key = toDateKey(date);
-        const bucket = eventsByDate.get(key) || [];
+        const bucket = calendarEventsByDate.get(key) || [];
         bucket.push(event);
-        eventsByDate.set(key, bucket);
+        calendarEventsByDate.set(key, bucket);
     }
 
     const rows = [];
@@ -171,15 +201,12 @@ function renderCalendar(events) {
             const date = new Date(start);
             date.setDate(start.getDate() + week * 7 + day);
             const key = toDateKey(date);
-            const dayEvents = eventsByDate.get(key) || [];
+            const dayEvents = calendarEventsByDate.get(key) || [];
             const muted = date.getMonth() !== month ? " muted" : "";
             cells.push(`
                 <td class="${muted}">
                     <span class="day-number">${date.getDate()}</span>
-                    ${dayEvents.slice(0, 3).map((event) => {
-                        const fullText = `${event.title}\n${formatDateTime(event.start_time)} · ${event.course_name || "개인 일정"}`;
-                        return `<div class="event" title="${escapeHtml(fullText)}" data-full-title="${escapeHtml(fullText)}">${escapeHtml(event.title)}</div>`;
-                    }).join("")}
+                    ${renderCalendarDayEvents(dayEvents, key)}
                 </td>
             `);
         }
@@ -187,6 +214,83 @@ function renderCalendar(events) {
     }
 
     calendarBodyEl.innerHTML = rows.join("");
+}
+
+function renderCalendarDayEvents(dayEvents, dateKey) {
+    const visibleEvents = dayEvents.slice(0, 2);
+    const hiddenCount = dayEvents.length - visibleEvents.length;
+    const eventItems = visibleEvents.map((event) => {
+        const fullText = formatCalendarEventDetail(event);
+        return `<div class="event" title="${escapeHtml(fullText)}" data-full-title="${escapeHtml(fullText)}">${escapeHtml(event.title)}</div>`;
+    });
+
+    if (hiddenCount > 0) {
+        eventItems.push(`
+            <button class="event event-more" type="button" data-calendar-more="${escapeHtml(dateKey)}" aria-expanded="false">
+                +${hiddenCount} more
+            </button>
+        `);
+    }
+
+    return eventItems.join("");
+}
+
+function showCalendarPopover(anchor, dateKey, dayEvents) {
+    closeCalendarPopover();
+
+    anchor.setAttribute("aria-expanded", "true");
+    const popover = document.createElement("div");
+    popover.className = "calendar-popover";
+    popover.setAttribute("role", "dialog");
+    popover.innerHTML = `
+        <div class="calendar-popover-header">
+            <strong>${escapeHtml(dateKey)}</strong>
+            <button class="calendar-popover-close" type="button" aria-label="Close">x</button>
+        </div>
+        <div class="calendar-popover-list">
+            ${dayEvents.map((event) => `
+                <article class="calendar-popover-item">
+                    <strong>${escapeHtml(event.title)}</strong>
+                    <span>${formatDateTime(event.start_time)} · ${escapeHtml(event.course_name || "개인 일정")}</span>
+                </article>
+            `).join("")}
+        </div>
+    `;
+
+    document.body.appendChild(popover);
+    activeCalendarPopover = popover;
+
+    const anchorRect = anchor.getBoundingClientRect();
+    const popoverRect = popover.getBoundingClientRect();
+    const gap = 8;
+    const left = Math.min(
+        Math.max(anchorRect.left, gap),
+        window.innerWidth - popoverRect.width - gap
+    );
+    const top = Math.min(
+        Math.max(anchorRect.bottom + gap, gap),
+        window.innerHeight - popoverRect.height - gap
+    );
+
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`;
+
+    popover.querySelector(".calendar-popover-close")?.addEventListener("click", () => {
+        anchor.setAttribute("aria-expanded", "false");
+        closeCalendarPopover();
+    });
+}
+
+function closeCalendarPopover() {
+    document
+        .querySelectorAll("[data-calendar-more][aria-expanded='true']")
+        .forEach((button) => button.setAttribute("aria-expanded", "false"));
+    activeCalendarPopover?.remove();
+    activeCalendarPopover = null;
+}
+
+function formatCalendarEventDetail(event) {
+    return `${event.title}\n${formatDateTime(event.start_time)} · ${event.course_name || "개인 일정"}`;
 }
 
 function toDateKey(date) {
