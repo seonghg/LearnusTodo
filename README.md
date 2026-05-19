@@ -37,3 +37,24 @@ todo/
          ├─ application-example.properties  # 환경설정 예시 파일
          └─ static/                         # 프론트엔드 파일
 ```
+
+## 3. Preview
+3.1 Login
+
+<img width="1097" height="577" alt="login" src="https://github.com/user-attachments/assets/5ae6b369-1ffc-47a5-a484-9d0e04c993b0" />
+
+3.2 Dashborad
+
+<img width="1858" height="831" alt="Dash" src="https://github.com/user-attachments/assets/c66a265e-88fb-4378-b1cd-17352535dc95" />
+
+3.3 Todo
+
+<img width="1856" height="832" alt="todoo" src="https://github.com/user-attachments/assets/07ce03b7-5af3-4b00-a665-eba9dc9aff66" />
+
+3.4 Grade predict
+
+<img width="1882" height="747" alt="predict" src="https://github.com/user-attachments/assets/cc321cb6-6212-4d59-8d64-e1556c496cce" />
+
+3.5 mypage
+
+<img width="1868" height="837" alt="mypage" src="https://github.com/user-attachments/assets/d1fae3f6-5101-4c52-b8f9-eb3688fbb3ce" />
