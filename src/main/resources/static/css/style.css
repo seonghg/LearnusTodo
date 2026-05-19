@@ -548,16 +548,30 @@ label {
     width: 100%;
 }
 
+.grade-layout {
+    display: grid;
+    grid-template-columns: minmax(360px, 460px) minmax(360px, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.grade-input-card {
+    padding: 16px;
+}
+
+.grade-input-card .section-header {
+    margin-bottom: 12px;
+}
+
 .grade-form {
     display: grid;
-    gap: 12px;
-    max-width: 720px;
+    gap: 8px;
 }
 
 .grade-grid {
     display: grid;
-    grid-template-columns: 1fr 120px 120px;
-    gap: 12px;
+    grid-template-columns: minmax(86px, 1fr) 88px 88px;
+    gap: 8px;
     align-items: center;
 }
 
@@ -567,10 +581,15 @@ label {
     font-weight: 700;
 }
 
+.grade-grid input {
+    min-height: 36px;
+    padding: 8px 10px;
+}
+
 .action-row {
     display: flex;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 .result-box {
@@ -580,6 +599,187 @@ label {
     background: var(--primary-soft);
     color: var(--primary-color);
     font-weight: 700;
+}
+
+.grade-result-panel {
+    display: grid;
+    gap: 20px;
+}
+
+.grade-score-card {
+    min-height: 190px;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    color: var(--text-color);
+    padding: 24px;
+    text-align: center;
+}
+
+.grade-score-card .grade-label {
+    color: var(--muted-color);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.grade-score-card strong {
+    font-size: 76px;
+    line-height: 0.95;
+    letter-spacing: 0;
+}
+
+.grade-score-card span:last-child {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.grade-score-card.is-empty strong {
+    color: var(--muted-color);
+}
+
+.grade-a {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.grade-b {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.grade-c {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.grade-d {
+    border-color: #fed7aa;
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.grade-f {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: var(--danger-color);
+}
+
+.grade-chart {
+    display: grid;
+    gap: 14px;
+}
+
+.grade-trend {
+    display: grid;
+    gap: 10px;
+}
+
+.grade-trend-summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.grade-trend-summary strong {
+    font-size: 16px;
+}
+
+.grade-trend-summary span {
+    color: var(--muted-color);
+    font-size: 13px;
+    text-align: right;
+}
+
+.grade-line-chart {
+    width: 100%;
+    height: 190px;
+    overflow: visible;
+}
+
+.grade-line-grid {
+    stroke: #e5e7eb;
+    stroke-width: 1;
+}
+
+.grade-line-path {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 4;
+}
+
+.grade-line-area {
+    fill: rgba(37, 99, 235, 0.11);
+}
+
+.grade-line-point {
+    fill: white;
+    stroke: var(--primary-color);
+    stroke-width: 3;
+}
+
+.grade-line-label {
+    fill: var(--muted-color);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.grade-line-score {
+    fill: var(--text-color);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.grade-contribution-list {
+    display: grid;
+    gap: 12px;
+}
+
+.grade-chart-row {
+    display: grid;
+    gap: 8px;
+}
+
+.grade-chart-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+}
+
+.grade-chart-meta strong {
+    font-size: 14px;
+}
+
+.grade-chart-meta span {
+    color: var(--muted-color);
+    font-size: 12px;
+    text-align: right;
+}
+
+.grade-bar-track {
+    height: 14px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #eef2f7;
+}
+
+.grade-bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #22c55e, #2563eb);
 }
 
 .profile-grid {
@@ -637,6 +837,7 @@ label {
     .app-container,
     .dashboard-grid,
     .todo-layout,
+    .grade-layout,
     .status-cards,
     .profile-grid {
         grid-template-columns: 1fr;
@@ -657,6 +858,10 @@ label {
 
     .grade-grid {
         grid-template-columns: 1fr;
+    }
+
+    .grade-grid-header {
+        display: none;
     }
 
     .sync-form {
