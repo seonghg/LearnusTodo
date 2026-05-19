@@ -18,9 +18,4 @@ public class TodoApplication {
 	public RedirectView home() {
 		return new RedirectView("/login.html");
 	}
-
-	@GetMapping("/hello")
-	public String hello() {
-		return "Hello Spring Boot";
-	}
 }

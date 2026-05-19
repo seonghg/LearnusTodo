@@ -9,8 +9,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +30,8 @@ import java.util.regex.Pattern;
 @RestController
 public class LearnUsController {
 
+    private static final Logger log = LoggerFactory.getLogger(LearnUsController.class);
+
     private static final String SOURCE_TYPE = "LEARNUS";
     private static final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul");
 
@@ -43,7 +47,7 @@ public class LearnUsController {
         this.learnUsRepository = learnUsRepository;
     }
 
-    @GetMapping("/todo/api/learnus_con")
+    @PostMapping("/todo/api/learnus_con")
     public String learnusConnect(
             @RequestParam("id") String id,
             @RequestParam("password") String password,
@@ -59,15 +63,13 @@ public class LearnUsController {
 
             driver = new ChromeDriver(options);
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-
-            System.out.println("==== LearnUs Controller Called ====");
-            System.out.println("id = " + id);
+            log.info("Starting LearnUs sync for user={}", userId);
 
             driver.get("https://ys.learnus.org/");
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
             String initialUrl = driver.getCurrentUrl();
-            System.out.println("Initial URL = " + initialUrl);
+            log.debug("Initial LearnUs URL={}", initialUrl);
 
             if (!exists(driver, By.cssSelector("input[type='password']"))) {
                 WebElement loginEntry = findFirst(driver,
@@ -81,7 +83,7 @@ public class LearnUsController {
                 );
 
                 if (loginEntry != null) {
-                    System.out.println("Click login entry");
+                    log.debug("Clicking LearnUs login entry");
                     loginEntry.click();
                     wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
                     Thread.sleep(2000);
@@ -91,7 +93,7 @@ public class LearnUsController {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
             Thread.sleep(2000);
 
-            System.out.println("Login Page URL = " + driver.getCurrentUrl());
+            log.debug("LearnUs login page URL={}", driver.getCurrentUrl());
 
             WebElement idInput = findFirst(driver,
                     By.name("id"),
@@ -122,14 +124,8 @@ public class LearnUsController {
             );
 
             if (idInput == null || pwInput == null) {
-                return html(
-                        "FAIL",
-                        "Could not find SSO login input fields.",
-                        "Current URL: " + driver.getCurrentUrl(),
-                        extractInputDebug(driver),
-                        "",
-                        ""
-                );
+                log.warn("Could not find LearnUs SSO input fields. currentUrl={}", driver.getCurrentUrl());
+                return "FAIL: Could not find LearnUs login fields.";
             }
 
             idInput.clear();
@@ -137,8 +133,6 @@ public class LearnUsController {
 
             pwInput.clear();
             pwInput.sendKeys(password);
-
-            System.out.println("ID/PW filled");
 
             WebElement loginButton = findFirst(driver,
                     By.cssSelector("button[type='submit']"),
@@ -151,10 +145,10 @@ public class LearnUsController {
             );
 
             if (loginButton != null) {
-                System.out.println("Click submit button");
+                log.debug("Submitting LearnUs login form by button");
                 loginButton.click();
             } else {
-                System.out.println("Submit by ENTER");
+                log.debug("Submitting LearnUs login form by enter key");
                 pwInput.sendKeys(Keys.ENTER);
             }
 
@@ -162,14 +156,12 @@ public class LearnUsController {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
             String afterLoginUrl = driver.getCurrentUrl();
-            System.out.println("After Login URL = " + afterLoginUrl);
+            log.debug("After LearnUs login URL={}", afterLoginUrl);
 
             driver.get("https://ys.learnus.org/?lang=ko");
             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
             Thread.sleep(3000);
 
-            String finalUrl = driver.getCurrentUrl();
-            String title = driver.getTitle();
             String bodyText = driver.findElement(By.tagName("body")).getText();
             String lowerBody = bodyText.toLowerCase();
 
@@ -181,9 +173,6 @@ public class LearnUsController {
                             || exists(driver, By.cssSelector(".front-box-body.course_lists"))
                             || exists(driver, By.cssSelector("td.day[data-day-timestamp]"));
 
-            String calendarText = "";
-            String calendarHtml = "";
-
             WebElement calendarBox = findFirstAny(driver,
                     By.cssSelector(".front-box-body:has([id^='calendar-month-'])"),
                     By.xpath("//div[contains(concat(' ', normalize-space(@class), ' '), ' front-box-body ')][.//*[starts-with(@id, 'calendar-month-')]]"),
@@ -191,22 +180,9 @@ public class LearnUsController {
                     By.cssSelector("table.minicalendar")
             );
 
-            if (calendarBox != null) {
-                calendarText = preview(calendarBox.getText(), 4000);
-                calendarHtml = preview(calendarBox.getAttribute("outerHTML"), 20000);
-            }
-
-            String courseText = "";
-            String courseHtml = "";
-
             WebElement courseBox = findFirstAny(driver,
                     By.cssSelector("div.front-box-body.course_lists")
             );
-
-            if (courseBox != null) {
-                courseText = preview(courseBox.getText(), 4000);
-                courseHtml = preview(courseBox.getAttribute("outerHTML"), 12000);
-            }
 
             SyncResult syncResult = new SyncResult();
 
@@ -215,25 +191,22 @@ public class LearnUsController {
                 syncResult.eventCount = saveCalendarEvents(userId, calendarBox);
             }
 
-            return html(
-                    success ? "SUCCESS" : "FAIL",
-                    success ? "Login checked. Extracted LearnUs target sections below." : "Login failed or target sections were not found.",
-                    "Initial URL: " + initialUrl
-                            + "\nAfter Login URL: " + afterLoginUrl
-                            + "\nFinal URL: " + finalUrl
-                            + "\nTitle: " + title,
-                    section("DB Sync Result", syncResult.message())
-                            + section("Calendar Text", calendarText)
-                            + section("Calendar HTML", calendarHtml)
-                            + section("Course List Text", courseText)
-                            + section("Course List HTML", courseHtml),
-                    calendarHtml,
-                    courseHtml
+            if (!success) {
+                log.warn("LearnUs login or target extraction failed for user={}", userId);
+                return "FAIL: LearnUs login failed or target sections were not found.";
+            }
+
+            log.info(
+                    "LearnUs sync completed for user={}, courses={}, events={}",
+                    userId,
+                    syncResult.courseCount,
+                    syncResult.eventCount
             );
+            return "SUCCESS\n" + syncResult.message();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return html("ERROR", e.getClass().getName() + "\n" + e.getMessage(), "", "", "", "");
+            log.error("LearnUs sync failed for user={}", userId, e);
+            return "ERROR: LearnUs sync failed.";
         } finally {
             if (driver != null) {
                 driver.quit();
@@ -320,21 +293,18 @@ public class LearnUsController {
 
                 upsertUserCourse(userId, courseId, item, itemText);
 
-                System.out.println("[COURSE SAVED] "
-                        + "externalCourseId=" + externalCourseId
-                        + ", courseCode=" + courseCode
-                        + ", courseName=" + courseName
-                        + ", professor=" + professorName
-                        + ", semester=" + semesterName
-                        + ", learningRate=" + extractLearningRate(itemText)
-                        + ", completed=" + extractCompletedCount(itemText)
-                        + ", total=" + extractTotalCount(itemText)
+                log.debug(
+                        "Saved LearnUs course. externalCourseId={}, courseCode={}, courseName={}, learningRate={}",
+                        externalCourseId,
+                        courseCode,
+                        courseName,
+                        extractLearningRate(itemText)
                 );
 
                 savedCount++;
 
             } catch (Exception e) {
-                System.out.println("Course parse/save skipped: " + e.getMessage());
+                log.debug("Skipping LearnUs course item because parsing or saving failed.", e);
             }
         }
 
@@ -379,7 +349,7 @@ public class LearnUsController {
 
     private int saveCalendarEvents(String userId, WebElement calendarBox) {
         if (calendarBox == null) {
-            System.out.println("[CALENDAR] calendarBox is null");
+            log.debug("LearnUs calendar section was not found.");
             return 0;
         }
 
@@ -387,7 +357,7 @@ public class LearnUsController {
         Set<String> savedExternalIds = new HashSet<>();
 
         List<WebElement> dayCells = calendarBox.findElements(By.cssSelector("td.day[data-day-timestamp]"));
-        System.out.println("[CALENDAR] dayCells count = " + dayCells.size());
+        log.debug("Found {} LearnUs calendar day cells.", dayCells.size());
 
         for (WebElement dayCell : dayCells) {
             try {
@@ -414,13 +384,13 @@ public class LearnUsController {
 
                 if (hiddenDiv == null) {
                     if (hasEventClass) {
-                        System.out.println("[CALENDAR] hasevent day but hiddenDiv is null. date=" + dayStart);
+                        log.debug("Calendar day has event marker but no hidden event container. date={}", dayStart);
                     }
                     continue;
                 }
 
                 List<WebElement> eventDivs = hiddenDiv.findElements(By.cssSelector("div[data-popover-eventtype-course]"));
-                System.out.println("[CALENDAR] date=" + dayStart + ", eventDivs=" + eventDivs.size());
+                log.debug("Found {} LearnUs calendar events for date={}", eventDivs.size(), dayStart);
 
                 if (eventDivs.isEmpty()) {
                     String hiddenText = firstNonBlank(
@@ -457,7 +427,7 @@ public class LearnUsController {
                                 externalEventId
                         );
 
-                        System.out.println("[CALENDAR SAVED - FALLBACK] date=" + dayStart + ", title=" + title);
+                        log.debug("Saved LearnUs fallback calendar event. date={}, title={}", dayStart, title);
                         savedCount++;
                     }
 
@@ -503,12 +473,12 @@ public class LearnUsController {
                             externalEventId
                     );
 
-                    System.out.println("[CALENDAR SAVED] date=" + dayStart + ", title=" + title + ", courseId=" + matchedCourseId);
+                    log.debug("Saved LearnUs calendar event. date={}, title={}, courseId={}", dayStart, title, matchedCourseId);
                     savedCount++;
                 }
 
             } catch (Exception e) {
-                System.out.println("Calendar day parse/save skipped: " + e.getMessage());
+                log.debug("Skipping LearnUs calendar day because parsing or saving failed.", e);
             }
         }
 
@@ -955,106 +925,6 @@ public class LearnUsController {
 
     private String stableId(String value) {
         return Integer.toUnsignedString(String.valueOf(value).hashCode(), 36);
-    }
-
-    private String extractInputDebug(WebDriver driver) {
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            List<WebElement> inputs = driver.findElements(By.tagName("input"));
-
-            sb.append("Current URL: ").append(driver.getCurrentUrl()).append("\n\n");
-            sb.append("Detected input tags:\n");
-
-            for (WebElement input : inputs) {
-                sb.append("type=")
-                        .append(input.getAttribute("type"))
-                        .append(", name=")
-                        .append(input.getAttribute("name"))
-                        .append(", id=")
-                        .append(input.getAttribute("id"))
-                        .append(", placeholder=")
-                        .append(input.getAttribute("placeholder"))
-                        .append("\n");
-            }
-
-        } catch (Exception e) {
-            sb.append("input debug failed: ").append(e.getMessage());
-        }
-
-        return sb.toString();
-    }
-
-    private String preview(String text, int maxLength) {
-        if (text == null) {
-            return "";
-        }
-
-        if (text.length() > maxLength) {
-            return text.substring(0, maxLength) + "\n... truncated ...";
-        }
-
-        return text;
-    }
-
-    private String section(String title, String value) {
-        String body = value == null || value.isBlank() ? "(not found)" : value;
-
-        return "\n\n[" + title + "]\n" + body;
-    }
-
-    private String html(
-            String status,
-            String message,
-            String meta,
-            String debug,
-            String calendarHtml,
-            String courseHtml
-    ) {
-        String color = status.equals("SUCCESS") ? "green" : "red";
-
-        return """
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>LearnUs Login Test</title>
-                </head>
-                <body>
-                    <h2 style="color:%s;">%s</h2>
-                    <h3>Message</h3>
-                    <pre>%s</pre>
-                    <h3>Meta</h3>
-                    <pre>%s</pre>
-                    <h3>Extracted Data / Debug</h3>
-                    <pre style="white-space:pre-wrap; border:1px solid #ccc; padding:10px;">%s</pre>
-                    <h3>Raw Calendar HTML</h3>
-                    <pre style="white-space:pre-wrap; border:1px solid #ccc; padding:10px;">%s</pre>
-                    <h3>Raw Course List HTML</h3>
-                    <pre style="white-space:pre-wrap; border:1px solid #ccc; padding:10px;">%s</pre>
-                </body>
-                </html>
-                """.formatted(
-                color,
-                escape(status),
-                escape(message),
-                escape(meta),
-                escape(debug),
-                escape(calendarHtml),
-                escape(courseHtml)
-        );
-    }
-
-    private String escape(String value) {
-        if (value == null) {
-            return "";
-        }
-
-        return value
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&#39;");
     }
 
     private static class SyncResult {

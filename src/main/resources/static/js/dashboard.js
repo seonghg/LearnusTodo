@@ -85,7 +85,10 @@ syncForm?.addEventListener("submit", async (event) => {
     const params = new URLSearchParams({ id: learnusId, password });
 
     try {
-        const response = await fetch(`/todo/api/learnus_con?${params.toString()}`);
+        const response = await fetch("/todo/api/learnus_con", {
+            method: "POST",
+            body: params
+        });
         const resultHtml = await response.text();
 
         if (!response.ok || !resultHtml.includes("SUCCESS")) {

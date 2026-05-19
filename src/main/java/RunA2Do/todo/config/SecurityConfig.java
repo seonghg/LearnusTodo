@@ -26,8 +26,6 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/hello",
-                                "/db-test",
                                 "/api/auth/register",
                                 "/api/grade/**"
                         ).permitAll()
