@@ -130,6 +130,11 @@ label {
 }
 
 .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
     background: white;
     border-right: 1px solid var(--border-color);
     padding: 24px 18px;
@@ -635,6 +640,9 @@ label {
     }
 
     .sidebar {
+        position: static;
+        height: auto;
+        overflow-y: visible;
         border-right: 0;
         border-bottom: 1px solid var(--border-color);
     }
