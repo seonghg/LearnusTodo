@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnToDo | 가이드</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <a class="logo" href="dashboard.html">LearnToDo</a>
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">대시보드</a>
+                <a href="todo.html" class="nav-item">ToDo</a>
+                <a href="grades.html" class="nav-item">성적 예측</a>
+                <a href="guide.html" class="nav-item active">가이드</a>
+                <a href="mypage.html" class="nav-item">마이페이지</a>
+                <form action="/logout" method="post">
+                    <button class="nav-item nav-button" type="submit">로그아웃</button>
+                </form>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div>
+                    <h1>가이드</h1>
+                    <p class="muted">처음 사용하는 흐름대로 LearnToDo의 주요 기능을 따라가 보세요.</p>
+                </div>
+            </header>
+
+            <section class="guide-hero card">
+                <div>
+                    <span class="eyebrow">Quick Tutorial</span>
+                    <h2>LearnUs 일정부터 성적 예측까지 한 번에 익히기</h2>
+                    <p class="muted">아래 순서대로 진행하면 강의 동기화, 일정 확인, 개인 ToDo 추가, 성적 계산, 내 정보 관리까지 전체 사용 흐름을 빠르게 파악할 수 있습니다.</p>
+                </div>
+                <a class="btn btn-primary" href="dashboard.html">대시보드에서 시작</a>
+            </section>
+
+            <section class="guide-layout">
+                <article class="card guide-step">
+                    <span class="guide-step-number">1</span>
+                    <div>
+                        <h2>서비스 계정으로 로그인</h2>
+                        <p class="muted">회원가입한 LearnToDo 계정으로 로그인합니다. 로그인 후에는 대시보드가 첫 화면으로 열립니다.</p>
+                        <a class="guide-link" href="dashboard.html">대시보드 보기</a>
+                    </div>
+                </article>
+
+                <article class="card guide-step">
+                    <span class="guide-step-number">2</span>
+                    <div>
+                        <h2>LearnUs 동기화 실행</h2>
+                        <p class="muted">대시보드 상단에서 LearnUs 아이디와 비밀번호를 입력하고 동기화를 누르면 강의 목록과 일정이 저장됩니다.</p>
+                        <ul class="guide-list">
+                            <li>강의 수, 일정 수, 평균 진도율이 요약 카드에 표시됩니다.</li>
+                            <li>동기화 후 강의 목록과 다가오는 일정이 자동으로 갱신됩니다.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="card guide-step">
+                    <span class="guide-step-number">3</span>
+                    <div>
+                        <h2>달력에서 일정 확인</h2>
+                        <p class="muted">이번 달 일정 영역에서 마감 일정과 수업 일정을 날짜별로 확인합니다. 일정이 많으면 더보기 버튼으로 같은 날짜의 전체 일정을 볼 수 있습니다.</p>
+                        <ul class="guide-list">
+                            <li>이전, Today, 다음 버튼으로 월을 이동합니다.</li>
+                            <li>일정 위에 마우스를 올리면 자세한 제목과 시간이 보입니다.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="card guide-step">
+                    <span class="guide-step-number">4</span>
+                    <div>
+                        <h2>개인 ToDo 추가</h2>
+                        <p class="muted">ToDo 화면에서 과목, 제목, 마감일, 우선순위를 입력하면 개인 일정이 캘린더와 최근 일정 목록에 추가됩니다.</p>
+                        <a class="guide-link" href="todo.html">ToDo 추가하기</a>
+                    </div>
+                </article>
+
+                <article class="card guide-step">
+                    <span class="guide-step-number">5</span>
+                    <div>
+                        <h2>예상 성적 계산</h2>
+                        <p class="muted">성적 예측 화면에서 평가 항목별 비율과 점수를 입력한 뒤 예상 점수를 계산합니다. 결과 카드와 그래프로 항목별 기여도를 함께 확인할 수 있습니다.</p>
+                        <a class="guide-link" href="grades.html">성적 예측하기</a>
+                    </div>
+                </article>
+
+                <article class="card guide-step">
+                    <span class="guide-step-number">6</span>
+                    <div>
+                        <h2>내 정보와 일정 요약 관리</h2>
+                        <p class="muted">마이페이지에서 내 프로필을 확인하고 수정할 수 있습니다. 전체 일정, 오늘 일정, 다가오는 일정 요약도 함께 볼 수 있습니다.</p>
+                        <a class="guide-link" href="mypage.html">마이페이지 보기</a>
+                    </div>
+                </article>
+            </section>
+
+            <section class="guide-tips">
+                <article class="card">
+                    <div class="section-header">
+                        <h2>추천 사용 순서</h2>
+                    </div>
+                    <ol class="guide-checklist">
+                        <li>회원가입 후 로그인합니다.</li>
+                        <li>대시보드에서 LearnUs 동기화를 먼저 실행합니다.</li>
+                        <li>달력과 다가오는 일정으로 이번 주 할 일을 확인합니다.</li>
+                        <li>개인 과제나 시험 준비 일정은 ToDo에서 직접 추가합니다.</li>
+                        <li>성적 예측으로 목표 점수까지 필요한 점수를 가늠합니다.</li>
+                    </ol>
+                </article>
+
+                <article class="card">
+                    <div class="section-header">
+                        <h2>문제가 생겼을 때</h2>
+                    </div>
+                    <ul class="guide-list">
+                        <li>강의가 보이지 않으면 LearnUs 아이디와 비밀번호를 확인한 뒤 다시 동기화하세요.</li>
+                        <li>일정이 비어 있으면 LearnUs에 등록된 일정이 있는지 먼저 확인하세요.</li>
+                        <li>성적 예측은 입력한 비율과 점수를 기준으로 계산되므로 과목 공지의 평가 기준과 맞춰 입력하세요.</li>
+                    </ul>
+                </article>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
