@@ -82,16 +82,13 @@ syncForm?.addEventListener("submit", async (event) => {
 
     syncStatus.textContent = "LearnUs 정보를 동기화하는 중입니다.";
 
-    const params = new URLSearchParams({ id: learnusId, password });
-
     try {
         const response = await fetch("/todo/api/learnus_con", {
-            method: "POST",
-            body: params
+            ...jsonRequestOptions("POST", { id: learnusId, password })
         });
-        const resultHtml = await response.text();
+        const result = await response.json();
 
-        if (!response.ok || !resultHtml.includes("SUCCESS")) {
+        if (!response.ok || !result.success) {
             syncStatus.textContent = "동기화에 실패했습니다. LearnUs 로그인 정보나 파싱 결과를 확인해주세요.";
             return;
         }

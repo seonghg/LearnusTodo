@@ -1,8 +1,8 @@
 package RunA2Do.todo.controller;
 
+import RunA2Do.todo.dto.GradeRequest;
+import RunA2Do.todo.dto.GradeTargetRequest;
 import RunA2Do.todo.service.GradePredictService;
-import RunA2Do.todo.service.GradePredictService.GradeRequest;
-import RunA2Do.todo.service.GradePredictService.GradeTargetRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

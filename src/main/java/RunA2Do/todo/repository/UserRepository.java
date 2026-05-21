@@ -1,10 +1,13 @@
 package RunA2Do.todo.repository;
 
+import RunA2Do.todo.dto.ProfileDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
+
+import static RunA2Do.todo.repository.JdbcColumns.nullableBoolean;
+import static RunA2Do.todo.repository.JdbcColumns.nullableOffsetDateTime;
 
 @Repository
 public class UserRepository {
@@ -15,8 +18,8 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, Object>> findProfile(String userId) {
-        return jdbcTemplate.queryForList(
+    public List<ProfileDto> findProfile(String userId) {
+        return jdbcTemplate.query(
                 """
                 SELECT
                     user_id,
@@ -30,6 +33,16 @@ public class UserRepository {
                 FROM users
                 WHERE user_id = ?
                 """,
+                (rs, rowNum) -> new ProfileDto(
+                        rs.getString("user_id"),
+                        rs.getString("user_name"),
+                        rs.getString("department"),
+                        rs.getString("id_number"),
+                        rs.getString("grade"),
+                        rs.getString("email_address"),
+                        nullableOffsetDateTime(rs, "create_time"),
+                        nullableBoolean(rs, "enabled")
+                ),
                 userId
         );
     }

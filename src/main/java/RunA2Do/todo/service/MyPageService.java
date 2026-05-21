@@ -1,14 +1,15 @@
 package RunA2Do.todo.service;
 
+import RunA2Do.todo.dto.ProfileDto;
+import RunA2Do.todo.dto.ScheduleSummaryResponse;
+import RunA2Do.todo.dto.UpdateProfileRequest;
 import RunA2Do.todo.repository.CalendarRepository;
 import RunA2Do.todo.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,43 +29,35 @@ public class MyPageService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Optional<Map<String, Object>> profile(String userId) {
-        List<Map<String, Object>> rows = userRepository.findProfile(userId);
+    public Optional<ProfileDto> profile(String userId) {
+        List<ProfileDto> rows = userRepository.findProfile(userId);
         if (rows.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(rows.get(0));
     }
 
-    public boolean updateProfile(
-            String userId,
-            String userName,
-            String department,
-            String idNumber,
-            String grade,
-            String emailAddress,
-            String newPassword
-    ) {
-        String normalizedEmail = blankToNull(emailAddress);
+    public boolean updateProfile(String userId, UpdateProfileRequest request) {
+        String normalizedEmail = blankToNull(request.emailAddress());
         int updated;
 
-        if (newPassword != null && !newPassword.isBlank()) {
+        if (request.newPassword() != null && !request.newPassword().isBlank()) {
             updated = userRepository.updateProfileWithPassword(
                     userId,
-                    userName,
-                    department,
-                    idNumber,
-                    grade,
+                    request.userName(),
+                    request.department(),
+                    request.idNumber(),
+                    request.grade(),
                     normalizedEmail,
-                    passwordEncoder.encode(newPassword)
+                    passwordEncoder.encode(request.newPassword())
             );
         } else {
             updated = userRepository.updateProfile(
                     userId,
-                    userName,
-                    department,
-                    idNumber,
-                    grade,
+                    request.userName(),
+                    request.department(),
+                    request.idNumber(),
+                    request.grade(),
                     normalizedEmail
             );
         }
@@ -72,13 +65,13 @@ public class MyPageService {
         return updated > 0;
     }
 
-    public Map<String, Object> scheduleSummary(String userId) {
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("totalEvents", calendarRepository.countEvents(userId));
-        result.put("todayEvents", calendarRepository.countTodayEvents(userId));
-        result.put("upcomingEvents", calendarRepository.countUpcomingEvents(userId));
-        result.put("nextEvents", calendarRepository.findNextEvents(userId, 5));
-        return result;
+    public ScheduleSummaryResponse scheduleSummary(String userId) {
+        return new ScheduleSummaryResponse(
+                calendarRepository.countEvents(userId),
+                calendarRepository.countTodayEvents(userId),
+                calendarRepository.countUpcomingEvents(userId),
+                calendarRepository.findNextEvents(userId, 5)
+        );
     }
 
     @Transactional

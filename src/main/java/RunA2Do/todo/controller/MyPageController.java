@@ -1,5 +1,9 @@
 package RunA2Do.todo.controller;
 
+import RunA2Do.todo.dto.ApiResponse;
+import RunA2Do.todo.dto.ProfileResponse;
+import RunA2Do.todo.dto.ScheduleSummaryResponse;
+import RunA2Do.todo.dto.UpdateProfileRequest;
 import RunA2Do.todo.security.AuthenticatedUsers;
 import RunA2Do.todo.service.MyPageService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,11 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @RestController
 public class MyPageController {
@@ -26,64 +27,41 @@ public class MyPageController {
     }
 
     @GetMapping("/api/mypage/profile")
-    public ResponseEntity<Map<String, Object>> profile(Authentication authentication) {
+    public ResponseEntity<?> profile(Authentication authentication) {
         String userId = AuthenticatedUsers.requireUserId(authentication);
 
         return myPageService.profile(userId)
-                .map((profile) -> {
-                    Map<String, Object> result = new LinkedHashMap<>();
-                    result.put("success", true);
-                    result.put("profile", profile);
-                    return ResponseEntity.ok(result);
-                })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                        "success", false,
-                        "message", "사용자 정보를 찾을 수 없습니다."
-                )));
+                .<ResponseEntity<?>>map((profile) -> ResponseEntity.ok(new ProfileResponse(true, profile)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        ApiResponse.fail("사용자 정보를 찾을 수 없습니다.")
+                ));
     }
 
     @PutMapping("/api/mypage/profile")
-    public ResponseEntity<Map<String, Object>> updateProfile(
-            @RequestParam String userName,
-            @RequestParam String department,
-            @RequestParam String idNumber,
-            @RequestParam String grade,
-            @RequestParam(required = false) String emailAddress,
-            @RequestParam(required = false) String newPassword,
+    public ResponseEntity<ApiResponse> updateProfile(
+            @RequestBody UpdateProfileRequest request,
             Authentication authentication
     ) {
         String userId = AuthenticatedUsers.requireUserId(authentication);
-        boolean updated = myPageService.updateProfile(
-                userId,
-                userName,
-                department,
-                idNumber,
-                grade,
-                emailAddress,
-                newPassword
-        );
+        boolean updated = myPageService.updateProfile(userId, request);
 
         if (!updated) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                    "success", false,
-                    "message", "수정할 사용자 정보를 찾을 수 없습니다."
-            ));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.fail("수정할 사용자 정보를 찾을 수 없습니다.")
+            );
         }
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "사용자 정보가 수정되었습니다."
-        ));
+        return ResponseEntity.ok(ApiResponse.ok("사용자 정보가 수정되었습니다."));
     }
 
     @GetMapping("/api/mypage/schedule-summary")
-    public Map<String, Object> scheduleSummary(Authentication authentication) {
+    public ScheduleSummaryResponse scheduleSummary(Authentication authentication) {
         String userId = AuthenticatedUsers.requireUserId(authentication);
         return myPageService.scheduleSummary(userId);
     }
 
     @DeleteMapping("/api/mypage/profile")
-    public ResponseEntity<Map<String, Object>> deleteProfile(
+    public ResponseEntity<ApiResponse> deleteProfile(
             Authentication authentication,
             HttpServletRequest request
     ) {
@@ -91,10 +69,9 @@ public class MyPageController {
         boolean deleted = myPageService.deleteProfile(userId);
 
         if (!deleted) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                    "success", false,
-                    "message", "삭제할 사용자 정보를 찾을 수 없습니다."
-            ));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResponse.fail("삭제할 사용자 정보를 찾을 수 없습니다.")
+            );
         }
 
         HttpSession session = request.getSession(false);
@@ -102,9 +79,6 @@ public class MyPageController {
             session.invalidate();
         }
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "계정이 삭제되었습니다."
-        ));
+        return ResponseEntity.ok(ApiResponse.ok("계정이 삭제되었습니다."));
     }
 }

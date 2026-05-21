@@ -42,8 +42,7 @@ todoForm?.addEventListener("submit", async (event) => {
 
     try {
         const response = await fetch("/api/todos", {
-            method: "POST",
-            body: new URLSearchParams(new FormData(todoForm))
+            ...jsonRequestOptions("POST", formToJson(todoForm))
         });
         const result = await response.json();
 

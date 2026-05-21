@@ -1,5 +1,9 @@
 package RunA2Do.todo.controller;
 
+import RunA2Do.todo.dto.CalendarEventDto;
+import RunA2Do.todo.dto.CourseDto;
+import RunA2Do.todo.dto.DashboardResponse;
+import RunA2Do.todo.dto.MeResponse;
 import RunA2Do.todo.security.AuthenticatedUsers;
 import RunA2Do.todo.service.DashboardService;
 import org.springframework.security.core.Authentication;
@@ -7,9 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class DashboardApiController {
@@ -21,7 +23,7 @@ public class DashboardApiController {
     }
 
     @GetMapping("/api/courses")
-    public List<Map<String, Object>> courses(
+    public List<CourseDto> courses(
             @RequestParam(required = false) String userId,
             Authentication authentication
     ) {
@@ -30,7 +32,7 @@ public class DashboardApiController {
     }
 
     @GetMapping("/api/calendar")
-    public List<Map<String, Object>> calendar(
+    public List<CalendarEventDto> calendar(
             @RequestParam(required = false) String userId,
             Authentication authentication
     ) {
@@ -39,7 +41,7 @@ public class DashboardApiController {
     }
 
     @GetMapping("/api/dashboard")
-    public Map<String, Object> dashboard(
+    public DashboardResponse dashboard(
             @RequestParam(required = false) String userId,
             Authentication authentication
     ) {
@@ -48,9 +50,7 @@ public class DashboardApiController {
     }
 
     @GetMapping("/api/me")
-    public Map<String, Object> me(Authentication authentication) {
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("userId", authentication == null ? null : authentication.getName());
-        return result;
+    public MeResponse me(Authentication authentication) {
+        return new MeResponse(authentication == null ? null : authentication.getName());
     }
 }

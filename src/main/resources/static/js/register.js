@@ -19,8 +19,7 @@ registerForm?.addEventListener("submit", async (event) => {
 
     try {
         const response = await fetch("/api/auth/register", {
-            method: "POST",
-            body: new URLSearchParams(formData)
+            ...jsonRequestOptions("POST", Object.fromEntries(formData.entries()))
         });
 
         const result = await response.json();

@@ -24,6 +24,18 @@ async function fetchJson(url) {
     return response.json();
 }
 
+function formToJson(form) {
+    return Object.fromEntries(new FormData(form).entries());
+}
+
+function jsonRequestOptions(method, body) {
+    return {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    };
+}
+
 function escapeHtml(value) {
     return String(value ?? "")
         .replaceAll("&", "&amp;")

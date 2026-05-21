@@ -1,11 +1,15 @@
 package RunA2Do.todo.repository;
 
+import RunA2Do.todo.dto.CalendarEventDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
+
+import static RunA2Do.todo.repository.JdbcColumns.nullableBoolean;
+import static RunA2Do.todo.repository.JdbcColumns.nullableLong;
+import static RunA2Do.todo.repository.JdbcColumns.nullableOffsetDateTime;
 
 @Repository
 public class CalendarRepository {
@@ -16,8 +20,8 @@ public class CalendarRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, Object>> findEventsByUserId(String userId) {
-        return jdbcTemplate.queryForList(
+    public List<CalendarEventDto> findEventsByUserId(String userId) {
+        return jdbcTemplate.query(
                 """
                 SELECT
                     cal.event_id,
@@ -36,6 +40,19 @@ public class CalendarRepository {
                 WHERE cal.user_id = ?
                 ORDER BY cal.start_time ASC, cal.title ASC
                 """,
+                (rs, rowNum) -> new CalendarEventDto(
+                        nullableLong(rs, "event_id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        nullableOffsetDateTime(rs, "start_time"),
+                        nullableOffsetDateTime(rs, "end_time"),
+                        nullableBoolean(rs, "is_all_day"),
+                        rs.getString("location"),
+                        rs.getString("source_type"),
+                        rs.getString("external_event_id"),
+                        rs.getString("course_name"),
+                        rs.getString("course_code")
+                ),
                 userId
         );
     }
@@ -113,15 +130,19 @@ public class CalendarRepository {
         );
     }
 
-    public List<Map<String, Object>> findNextEvents(String userId, int limit) {
-        return jdbcTemplate.queryForList(
+    public List<CalendarEventDto> findNextEvents(String userId, int limit) {
+        return jdbcTemplate.query(
                 """
                 SELECT
                     cal.event_id,
                     cal.title,
+                    cal.description,
                     cal.start_time,
                     cal.end_time,
                     cal.is_all_day,
+                    cal.location,
+                    cal.source_type,
+                    cal.external_event_id,
                     c.course_name,
                     c.course_code
                 FROM calendar cal
@@ -131,6 +152,19 @@ public class CalendarRepository {
                 ORDER BY cal.start_time ASC
                 LIMIT ?
                 """,
+                (rs, rowNum) -> new CalendarEventDto(
+                        nullableLong(rs, "event_id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        nullableOffsetDateTime(rs, "start_time"),
+                        nullableOffsetDateTime(rs, "end_time"),
+                        nullableBoolean(rs, "is_all_day"),
+                        rs.getString("location"),
+                        rs.getString("source_type"),
+                        rs.getString("external_event_id"),
+                        rs.getString("course_name"),
+                        rs.getString("course_code")
+                ),
                 userId,
                 limit
         );

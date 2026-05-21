@@ -13,8 +13,7 @@ profileForm?.addEventListener("submit", async (event) => {
 
     try {
         const response = await fetch("/api/mypage/profile", {
-            method: "PUT",
-            body: new URLSearchParams(new FormData(profileForm))
+            ...jsonRequestOptions("PUT", formToJson(profileForm))
         });
         const result = await response.json();
 

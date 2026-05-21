@@ -1,5 +1,8 @@
 package RunA2Do.todo.service;
 
+import RunA2Do.todo.dto.GradeRequest;
+import RunA2Do.todo.dto.GradeRequestView;
+import RunA2Do.todo.dto.GradeTargetRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,56 +48,5 @@ public class GradePredictService {
         if (Math.abs(totalWeight - 100.0) > 0.0001) {
             throw new IllegalArgumentException("평가 비율의 합은 반드시 100이어야 합니다.");
         }
-    }
-
-    public record GradeRequest(
-            double midtermWeight,
-            double finalWeight,
-            double homeworkWeight,
-            double presentationWeight,
-            double attendanceWeight,
-            Double midtermScore,
-            Double finalScore,
-            Double homeworkScore,
-            Double presentationScore,
-            Double attendanceScore
-    ) implements GradeRequestView {
-    }
-
-    public record GradeTargetRequest(
-            double midtermWeight,
-            double finalWeight,
-            double homeworkWeight,
-            double presentationWeight,
-            double attendanceWeight,
-            Double midtermScore,
-            Double finalScore,
-            Double homeworkScore,
-            Double presentationScore,
-            Double attendanceScore,
-            double targetScore
-    ) implements GradeRequestView {
-    }
-
-    public interface GradeRequestView {
-        double midtermWeight();
-
-        double finalWeight();
-
-        double homeworkWeight();
-
-        double presentationWeight();
-
-        double attendanceWeight();
-
-        Double midtermScore();
-
-        Double finalScore();
-
-        Double homeworkScore();
-
-        Double presentationScore();
-
-        Double attendanceScore();
     }
 }

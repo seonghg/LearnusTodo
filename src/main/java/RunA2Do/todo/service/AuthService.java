@@ -1,5 +1,6 @@
 package RunA2Do.todo.service;
 
+import RunA2Do.todo.dto.RegisterRequest;
 import RunA2Do.todo.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,24 +20,16 @@ public class AuthService {
     }
 
     @Transactional
-    public void register(
-            String userName,
-            String department,
-            String idNumber,
-            String grade,
-            String emailAddress,
-            String userId,
-            String password
-    ) {
+    public void register(RegisterRequest request) {
         userRepository.insertUser(
-                userName,
-                department,
-                idNumber,
-                grade,
-                emailAddress,
-                userId,
-                passwordEncoder.encode(password)
+                request.userName(),
+                request.department(),
+                request.idNumber(),
+                request.grade(),
+                request.emailAddress(),
+                request.userId(),
+                passwordEncoder.encode(request.password())
         );
-        userRepository.insertAuthority(userId, DEFAULT_AUTHORITY);
+        userRepository.insertAuthority(request.userId(), DEFAULT_AUTHORITY);
     }
 }

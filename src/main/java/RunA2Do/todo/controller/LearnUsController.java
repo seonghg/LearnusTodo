@@ -1,5 +1,7 @@
 package RunA2Do.todo.controller;
 
+import RunA2Do.todo.dto.LearnUsSyncRequest;
+import RunA2Do.todo.dto.LearnUsSyncResponse;
 import RunA2Do.todo.repository.LearnUsRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -13,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
@@ -48,12 +50,13 @@ public class LearnUsController {
     }
 
     @PostMapping("/todo/api/learnus_con")
-    public String learnusConnect(
-            @RequestParam("id") String id,
-            @RequestParam("password") String password,
+    public LearnUsSyncResponse learnusConnect(
+            @RequestBody LearnUsSyncRequest request,
             Authentication authentication
     ) {
         WebDriver driver = null;
+        String id = request.id();
+        String password = request.password();
         String userId = authentication != null ? authentication.getName() : id;
 
         try {
@@ -125,7 +128,7 @@ public class LearnUsController {
 
             if (idInput == null || pwInput == null) {
                 log.warn("Could not find LearnUs SSO input fields. currentUrl={}", driver.getCurrentUrl());
-                return "FAIL: Could not find LearnUs login fields.";
+                return new LearnUsSyncResponse(false, "Could not find LearnUs login fields.", 0, 0);
             }
 
             idInput.clear();
@@ -193,7 +196,7 @@ public class LearnUsController {
 
             if (!success) {
                 log.warn("LearnUs login or target extraction failed for user={}", userId);
-                return "FAIL: LearnUs login failed or target sections were not found.";
+                return new LearnUsSyncResponse(false, "LearnUs login failed or target sections were not found.", 0, 0);
             }
 
             log.info(
@@ -202,11 +205,16 @@ public class LearnUsController {
                     syncResult.courseCount,
                     syncResult.eventCount
             );
-            return "SUCCESS\n" + syncResult.message();
+            return new LearnUsSyncResponse(
+                    true,
+                    "LearnUs sync completed.",
+                    syncResult.courseCount,
+                    syncResult.eventCount
+            );
 
         } catch (Exception e) {
             log.error("LearnUs sync failed for user={}", userId, e);
-            return "ERROR: LearnUs sync failed.";
+            return new LearnUsSyncResponse(false, "LearnUs sync failed.", 0, 0);
         } finally {
             if (driver != null) {
                 driver.quit();

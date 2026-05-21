@@ -1,10 +1,16 @@
 package RunA2Do.todo.repository;
 
+import RunA2Do.todo.dto.CourseDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
+
+import static RunA2Do.todo.repository.JdbcColumns.nullableBoolean;
+import static RunA2Do.todo.repository.JdbcColumns.nullableDouble;
+import static RunA2Do.todo.repository.JdbcColumns.nullableInteger;
+import static RunA2Do.todo.repository.JdbcColumns.nullableLong;
+import static RunA2Do.todo.repository.JdbcColumns.nullableOffsetDateTime;
 
 @Repository
 public class CourseRepository {
@@ -15,8 +21,8 @@ public class CourseRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, Object>> findActiveCoursesByUserId(String userId) {
-        return jdbcTemplate.queryForList(
+    public List<CourseDto> findActiveCoursesByUserId(String userId) {
+        return jdbcTemplate.query(
                 """
                 SELECT
                     c.course_id,
@@ -40,6 +46,23 @@ public class CourseRepository {
                   AND uc.is_active = TRUE
                 ORDER BY c.course_name
                 """,
+                (rs, rowNum) -> new CourseDto(
+                        nullableLong(rs, "course_id"),
+                        rs.getString("external_course_id"),
+                        rs.getString("course_code"),
+                        rs.getString("course_name"),
+                        rs.getString("professor_name"),
+                        rs.getString("semester_name"),
+                        rs.getString("course_type"),
+                        rs.getString("course_level"),
+                        rs.getString("course_url"),
+                        nullableDouble(rs, "learning_rate"),
+                        nullableInteger(rs, "completed_count"),
+                        nullableInteger(rs, "total_count"),
+                        rs.getString("attendance_url"),
+                        nullableBoolean(rs, "is_new"),
+                        nullableOffsetDateTime(rs, "synced_at")
+                ),
                 userId
         );
     }
