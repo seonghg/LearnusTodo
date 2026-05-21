@@ -66,6 +66,10 @@ todo/
 
 <img width="1882" height="747" alt="predict" src="https://github.com/user-attachments/assets/cc321cb6-6212-4d59-8d64-e1556c496cce" />
 
-3.5 mypage
+3.5 Guide
+
+<img width="1881" height="848" alt="image" src="https://github.com/user-attachments/assets/48e98cb7-0069-4dec-bfb8-d5f49b2afcf0" />
+
+3.6 mypage
 
 <img width="1868" height="837" alt="mypage" src="https://github.com/user-attachments/assets/d1fae3f6-5101-4c52-b8f9-eb3688fbb3ce" />
