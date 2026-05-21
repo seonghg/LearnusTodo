@@ -13,13 +13,13 @@ Spring Boot service for Yonsei LearnUs Calendar
 
 ```text
 todo/
-├─ build.gradle                         # Gradle 빌드 설정, 의존성 관리
+├─ build.gradle                         # Gradle 빌드 설정 및 Spring Boot 의존성 관리
 ├─ settings.gradle                      # Gradle 프로젝트 이름 설정
 ├─ gradlew / gradlew.bat                # Gradle Wrapper 실행 파일
 ├─ README.md
 │
 ├─ gradle/
-│  └─ wrapper/                          # Gradle Wrapper 설정 및 jar
+│  └─ wrapper/                          # Gradle Wrapper 설정 파일 및 jar
 │
 └─ src/
    └─ main/
@@ -27,15 +27,26 @@ todo/
       │  └─ RunA2Do/
       │     └─ todo/
       │        ├─ TodoApplication.java  # Spring Boot Start Point
-      │        ├─ config/               # Spring Security 및 설정
-      │        ├─ controller/           # API 요청/응답 처리
-      │        ├─ service/              # 비즈니스 로직
-      │        ├─ repository/           # DB 접근 계층
-      │        └─ security/             # 인증/인가 관련 코드
+      │        ├─ config/               # Spring Security 설정
+      │        ├─ controller/           # 인증, 대시보드, LearnUs, ToDo, 성적, 마이페이지 API
+      │        ├─ dto/                  # API 요청/응답 DTO
+      │        ├─ repository/           # 사용자, 강의, 일정, LearnUs DB 접근 계층
+      │        ├─ security/             # 인증 사용자 조회 유틸
+      │        └─ service/              # 회원, 동기화, 대시보드, ToDo, 성적, 마이페이지 비즈니스 로직
       │
       └─ resources/
          ├─ application-example.properties  # 환경설정 예시 파일
-         └─ static/                         # 프론트엔드 파일
+         ├─ application.properties          # 로컬 실행용 환경설정 파일
+         └─ static/                         # HTML/CSS/JavaScript 프론트엔드 파일
+            ├─ dashboard.html               # LearnUs 동기화, 요약 카드, 달력, 강의/일정 목록
+            ├─ todo.html                    # 개인 일정 추가 및 최근 일정 조회
+            ├─ grades.html                  # 성적 예측 계산 화면
+            ├─ guide.html                   # 서비스 사용 가이드
+            ├─ mypage.html                  # 내 정보, 일정 요약, 계정 관리
+            ├─ login.html / register.html   # 로그인 및 회원가입
+            ├─ css/
+            │  └─ style.css                 # 전체 화면 공통 스타일
+            └─ js/                          # 화면별 동작 및 공통 API 유틸
 ```
 
 ## 3. Preview
@@ -43,7 +54,7 @@ todo/
 
 <img width="1097" height="577" alt="login" src="https://github.com/user-attachments/assets/5ae6b369-1ffc-47a5-a484-9d0e04c993b0" />
 
-3.2 Dashborad
+3.2 Dashboard
 
 <img width="1858" height="831" alt="Dash" src="https://github.com/user-attachments/assets/c66a265e-88fb-4378-b1cd-17352535dc95" />
 
