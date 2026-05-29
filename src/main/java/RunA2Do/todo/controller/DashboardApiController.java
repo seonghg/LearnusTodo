@@ -3,7 +3,6 @@ package RunA2Do.todo.controller;
 import RunA2Do.todo.dto.CalendarEventDto;
 import RunA2Do.todo.dto.CourseDto;
 import RunA2Do.todo.dto.DashboardResponse;
-import RunA2Do.todo.dto.MeResponse;
 import RunA2Do.todo.security.AuthenticatedUsers;
 import RunA2Do.todo.service.DashboardService;
 import org.springframework.security.core.Authentication;
@@ -49,8 +48,4 @@ public class DashboardApiController {
         return dashboardService.dashboard(resolvedUserId);
     }
 
-    @GetMapping("/api/me")
-    public MeResponse me(Authentication authentication) {
-        return new MeResponse(authentication == null ? null : authentication.getName());
-    }
 }

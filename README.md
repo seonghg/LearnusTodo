@@ -48,7 +48,6 @@ todo/
             ├─ guide.html                   # User guide
             ├─ mypage.html                  # Profile, schedule summary, account management
             ├─ login.html / register.html   # Login and registration pages
-            ├─ chat-test.html               # Chatbot API test page
             ├─ images/                      # Chatbot launcher images
             ├─ css/
             │  └─ style.css                 # Shared frontend styles
