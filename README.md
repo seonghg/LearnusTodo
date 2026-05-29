@@ -73,3 +73,7 @@ todo/
 3.6 mypage
 
 <img width="1868" height="837" alt="mypage" src="https://github.com/user-attachments/assets/d1fae3f6-5101-4c52-b8f9-eb3688fbb3ce" />
+
+3.7 chatbot
+
+<img width="447" height="603" alt="image" src="https://github.com/user-attachments/assets/9ddd7bda-9f23-4d3d-9fb5-a4d9bed35235" />
