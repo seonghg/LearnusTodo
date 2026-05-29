@@ -5,7 +5,9 @@ Spring Boot service for Yonsei LearnUs Calendar
 
 ## 1. Quick Start
 ```text
-[1] # You must configure application.properties !
+[1] # You must configure "application.properties"
+      1. Supabase PostgreSQL Pooler Connection Setting
+      2. Mistral API key Setting
 [2] .\gradlew.bat clean bootRun
 ```
 
@@ -13,40 +15,50 @@ Spring Boot service for Yonsei LearnUs Calendar
 
 ```text
 todo/
-├─ build.gradle                         # Gradle 빌드 설정 및 Spring Boot 의존성 관리
-├─ settings.gradle                      # Gradle 프로젝트 이름 설정
-├─ gradlew / gradlew.bat                # Gradle Wrapper 실행 파일
+├─ build.gradle                         # Gradle build setup and Spring Boot dependencies
+├─ settings.gradle                      # Gradle project name
+├─ gradlew / gradlew.bat                # Gradle Wrapper scripts
 ├─ README.md
 │
 ├─ gradle/
-│  └─ wrapper/                          # Gradle Wrapper 설정 파일 및 jar
+│  └─ wrapper/                          # Gradle Wrapper files
 │
 └─ src/
    └─ main/
       ├─ java/
       │  └─ RunA2Do/
       │     └─ todo/
-      │        ├─ TodoApplication.java  # Spring Boot Start Point
-      │        ├─ config/               # Spring Security 설정
-      │        ├─ controller/           # 인증, 대시보드, LearnUs, ToDo, 성적, 마이페이지 API
-      │        ├─ dto/                  # API 요청/응답 DTO
-      │        ├─ repository/           # 사용자, 강의, 일정, LearnUs DB 접근 계층
-      │        ├─ security/             # 인증 사용자 조회 유틸
-      │        └─ service/              # 회원, 동기화, 대시보드, ToDo, 성적, 마이페이지 비즈니스 로직
+      │        ├─ TodoApplication.java  # Spring Boot entry point
+      │        ├─ config/               # Spring Security configuration
+      │        ├─ controller/           # Auth, dashboard, LearnUs sync, ToDo, grades, my page, chatbot APIs
+      │        ├─ dto/                  # API request and response DTOs
+      │        ├─ repository/           # Database access for users, courses, calendar, LearnUs data
+      │        ├─ security/             # Authenticated user helper
+      │        └─ service/              # Business logic for auth, dashboard, ToDo, grades, my page
       │
       └─ resources/
-         ├─ application-example.properties  # 환경설정 예시 파일
-         ├─ application.properties          # 로컬 실행용 환경설정 파일
-         └─ static/                         # HTML/CSS/JavaScript 프론트엔드 파일
-            ├─ dashboard.html               # LearnUs 동기화, 요약 카드, 달력, 강의/일정 목록
-            ├─ todo.html                    # 개인 일정 추가 및 최근 일정 조회
-            ├─ grades.html                  # 성적 예측 계산 화면
-            ├─ guide.html                   # 서비스 사용 가이드
-            ├─ mypage.html                  # 내 정보, 일정 요약, 계정 관리
-            ├─ login.html / register.html   # 로그인 및 회원가입
+         ├─ application-example.properties  # Example environment configuration
+         ├─ application.properties          # Local/server-only configuration and secrets
+         └─ static/                         # HTML/CSS/JavaScript frontend
+            ├─ dashboard.html               # LearnUs sync, summary cards, calendar, courses, upcoming events
+            ├─ todo.html                    # Personal ToDo creation and recent schedule list
+            ├─ grades.html                  # Grade prediction screen
+            ├─ guide.html                   # User guide
+            ├─ mypage.html                  # Profile, schedule summary, account management
+            ├─ login.html / register.html   # Login and registration pages
+            ├─ chat-test.html               # Chatbot API test page
+            ├─ images/                      # Chatbot launcher images
             ├─ css/
-            │  └─ style.css                 # 전체 화면 공통 스타일
-            └─ js/                          # 화면별 동작 및 공통 API 유틸
+            │  └─ style.css                 # Shared frontend styles
+            └─ js/                          # Page scripts and shared API helpers
+               ├─ api.js                    # Common fetch and utility functions
+               ├─ chatbot.js                # Floating chatbot UI
+               ├─ dashboard.js              # Dashboard calendar and LearnUs sync logic
+               ├─ todo.js                   # ToDo form and recent schedule rendering
+               ├─ grades.js                 # Grade prediction interactions
+               ├─ mypage.js                 # Profile and schedule summary logic
+               ├─ login.js                  # Login page behavior
+               └─ register.js               # Registration page behavior
 ```
 
 ## 3. Preview
