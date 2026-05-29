@@ -2,71 +2,54 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>GPT 연결 테스트</title>
+    <title>챗봇 테스트</title>
 </head>
 <body>
 <h2>학사 챗봇 테스트</h2>
-<input type="text" id="apiKey" placeholder="api key 입력"
-       style="width:400px">
-<br><br>
 <input type="text" id="userInput" placeholder="질문 입력" style="width:400px">
-<button onClick="sendMessage()">전송</button>
+<button type="button" onClick="sendMessage()">전송</button>
 <div id="result" style="margin-top:20px; white-space:pre-wrap"></div>
 
 <script>
+    const messages = [
+        {
+            role: "system",
+            content: "당신은 연세대학교 소프트웨어학부 학생을 위한 학사 및 졸업요건 안내 챗봇입니다. 학사 관련 질문만 답변하세요."
+        }
+    ];
+
     async function sendMessage() {
-        const apiKey= document.getElementById('apiKey').value;
-        const message= document.getElementById('userInput').value;
+        const input = document.getElementById("userInput");
+        const result = document.getElementById("result");
+        const message = input.value.trim();
 
-        document.getElementById('result').textContent= '응답 중...';
+        if (!message) {
+            input.focus();
+            return;
+        }
 
-        const res= await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-4o-mini',
-                messages: [
-                    { role: 'system', content: `당신은 연세대학교 소프트웨어학부 22학번 학생을 위한 학사 및 졸업요건 안내 챗봇입니다.
-                아래 졸업요건 정보를 기반으로만 정확하게 답변하세요.
-                관련 없는 질문에는 "학사 관련 질문만 답변 가능합니다"라고 안내하세요.
+        messages.push({ role: "user", content: message });
+        result.textContent = "응답 중...";
 
-                [졸업요건 핵심 정보]
-                1. 졸업 총 이수학점: 135학점 이상
-                2. 전공 최소 이수학점: 기본전공 36학점, 심화전공 36학점
-                3. 전공필수 과목: 데이터구조론(SWE2001), 알고리즘기초(SWE2007), 운영체제(SWE3001), 소프트웨어공학(SWE3013)
-                4. 교양기초: 22학점 (채플, 글쓰기, 교양영어I/II, 리더십개발/실습, 컴퓨팅사고 등)
-                5. 전공탐색: 21학점
-                6. 대학교양: 8개 영역 이상 이수
-                7. 3000단위 이상 과목: 45학점 이상
-                8. 인증요건: 외국어인증(필수) + 정보인증 또는 산업실무역량인증(택1)
-                9. 2개 이상의 전공 이수 필수
-                10. 트랙: AI빅데이터, AI미디어, AI계산과학, 스마트IoT, 정보보호 (각 15학점 이상, 트랙 필수 6학점 포함)
-                11. SWE2006 기초데이터구조, SWE2014 기초알고리즘, SWE2015 기초프로그래밍은 기본전공 학점 불인정
-                12. 외국어 인증 (필수): 교양영어 4개 학기 이수 필수(편입생 면제), 아래 3가지 중 1개 달성
-                    - 교양영어 4개 학기 평량평균 A- 이상
-                    - 입학 후 응시한 공인어학시험에서 전공별 기준 점수 통과
-                    - 외국어 교양선택 2과목 이상 이수 & 성적 B- 이상
-                13. 정보 인증 또는 산업실무역량 인증(택1): 아래 3가지 중 1개
-                    - 학과 지정 등급 자격증 1개 이상 취득
-                    - 미래평생교육원 대체인정 강좌 수료
-                    - 산업실무역량 인증 교과목 이수/프로그램 참여로 200포인트 이상 취득
+        try {
+            const res = await fetch("/api/chatbot/message", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ messages })
+            });
 
-                14. 1전공 소프트웨어학부 + 2전공 소프트웨어학부 심화 중복 인정:
-                    - 공통 교과목 최대 7학점까지만 중복 인정 (졸업이수학점 중복 인정 불가)
-                    - 7학점 채우려면 SW엔지니어소양세미나, SW인턴십(1~4) 같은 1학점 과목만 인정
-                    - 1학점 과목 미이수 시 실질 최대 중복 인정은 6학점으로 줄어듦
-                    - 전공은 여유 있게 이수 권장` },
-                    { role: 'user', content: message }
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.message || `HTTP ${res.status}`);
+            }
 
-                ]
-            })
-        });
-
-        const data= await res.json();
-        document.getElementById('result').textContent= data.choices[0].message.content;
+            result.textContent = data.message;
+            messages.push({ role: "assistant", content: data.message });
+            input.value = "";
+        } catch (error) {
+            result.textContent = error.message || "챗봇 응답 중 오류가 발생했습니다.";
+            messages.pop();
+        }
     }
 </script>
 </body>

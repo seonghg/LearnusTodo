@@ -86,22 +86,21 @@ async function loadEvents() {
     try {
         const events = await fetchJson("/api/calendar");
         const now = new Date();
-        const upcoming = events
-            .filter((event) => new Date(event.start_time) >= now || event.source_type === "USER_TODO")
+        const recent = events
             .sort((a, b) => {
                 const aTodo = a.source_type === "USER_TODO" ? 0 : 1;
                 const bTodo = b.source_type === "USER_TODO" ? 0 : 1;
                 if (aTodo !== bTodo) return aTodo - bTodo;
-                return new Date(a.start_time) - new Date(b.start_time);
+                return Math.abs(new Date(a.start_time) - now) - Math.abs(new Date(b.start_time) - now);
             })
             .slice(0, 8);
 
-        if (!upcoming.length) {
+        if (!recent.length) {
             todoEventList.innerHTML = `<li class="empty-state">등록된 일정이 없습니다.</li>`;
             return;
         }
 
-        todoEventList.innerHTML = upcoming.map((event) => `
+        todoEventList.innerHTML = recent.map((event) => `
             <li class="data-item todo-event-item">
                 <div>
                     <strong>${escapeHtml(event.title)}</strong>
