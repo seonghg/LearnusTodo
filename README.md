@@ -1,4 +1,6 @@
-<img width="557" height="228" alt="LearnToDo" src="https://github.com/user-attachments/assets/5499da11-d1e3-47b2-8235-1ff3a7534abd" />
+<img width="228" height="228" alt="yon_chat_hover" src="https://github.com/user-attachments/assets/30868643-04d2-47be-bea7-43b96d5fa0dc" />
+
+<img width="557" height="228" alt="1425-Photoroom" src="https://github.com/user-attachments/assets/39e1cf37-0ba6-485d-8edd-50f2fd46d042" />
 
 # LearnTodo ?
 Spring Boot service for Yonsei LearnUs Calendar
@@ -84,8 +86,9 @@ todo/
 
 3.6 mypage
 
-<img width="1868" height="837" alt="mypage" src="https://github.com/user-attachments/assets/d1fae3f6-5101-4c52-b8f9-eb3688fbb3ce" />
+<img width="968" height="537" alt="mypage" src="https://github.com/user-attachments/assets/d1fae3f6-5101-4c52-b8f9-eb3688fbb3ce" />
 
 3.7 chatbot
 
-<img width="447" height="603" alt="image" src="https://github.com/user-attachments/assets/9ddd7bda-9f23-4d3d-9fb5-a4d9bed35235" />
+<img width="200" height="300<img width="1254" height="1254" alt="yon_chat_hover" src="https://github.com/user-attachments/assets/dd6e8bb6-7e70-4eed-8012-61d827b3b69c" />
+" alt="image" src="https://github.com/user-attachments/assets/9ddd7bda-9f23-4d3d-9fb5-a4d9bed35235" />
