@@ -90,5 +90,5 @@ todo/
 
 3.7 chatbot
 
-<img width="200" height="300<img width="1254" height="1254" alt="yon_chat_hover" src="https://github.com/user-attachments/assets/dd6e8bb6-7e70-4eed-8012-61d827b3b69c" />
-" alt="image" src="https://github.com/user-attachments/assets/9ddd7bda-9f23-4d3d-9fb5-a4d9bed35235" />
+<img width="300" height="400" alt="image" src="https://github.com/user-attachments/assets/fd2be8ca-f0c2-4421-b00b-67f415e3032a" />
+
